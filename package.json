@@ -1,0 +1,41 @@
+{
+  "name": "aws-lambda-framework",
+  "description": "Send Slack notifications via AWS Lambda functions with auto-generated cloudwatch logs link for the invocation.",
+  "main": "dist/SlackNotifier.js",
+  "types": "dist/SlackNotifier.d.ts",
+  "keywords": [
+    "lambda",
+    "aws",
+    "serverless",
+    "framework"
+  ],
+  "author": "dhjartvar",
+  "version": "0.0.1",
+  "dependencies": {
+    "lambda-slack-notifier": "^1.0.3",
+    "mysql2": "^2.0.2",
+    "pg": "^7.14.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.31",
+    "@types/dynamodb": "^1.2.0",
+    "@types/jest": "^24.0.18",
+    "@types/moment-timezone": "^0.5.12",
+    "@types/mysql2": "github:types/mysql2",
+    "@types/pg": "^7.11.2",
+    "aws-sdk": "^2.587.0",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.0.2",
+    "typedi": "^0.8.0",
+    "typescript": "^3.7.3"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "dev": "tsc && sam local invoke -e event.json -n env.json SlackNotifier",
+    "test": "jest",
+    "build": "tsc"
+  }
+}
