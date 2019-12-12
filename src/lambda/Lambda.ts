@@ -28,6 +28,7 @@ export default abstract class Lambda {
     Container.set('path-parameters', this.pathParameters)
     Container.set('context', this.pathParameters)
     Container.set('environment', process.env.NODE_ENV)
+    Container.set('slack-webhook', process.env.SLACK_WEBHOOK)
     Container.set('pooling', process.env.pooling ?? true)
   }
 
@@ -47,6 +48,12 @@ export default abstract class Lambda {
 
   public setEnvironment(environment: string) {
     Container.set('environment', environment)
+
+    return this
+  }
+
+  public setSlackWebhook(webhook: string) {
+    Container.set('slack-webhook', webhook)
 
     return this
   }
