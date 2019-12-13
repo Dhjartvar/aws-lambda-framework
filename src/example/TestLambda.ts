@@ -1,15 +1,18 @@
 import Lambda from 'src/lambda/Lambda'
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
 import Container from 'typedi'
-import AuroraStore from 'src/storage/AuroraStore'
+import Aurora from 'src/services/Aurora'
+import { validate } from 'src/validate/validator'
+import { RequestType, Request } from 'src/example/Request'
 
 class TestLambda extends Lambda {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
+    Container.set('request', validate(this.body!, RequestType))
   }
 
   invoke(): Promise<any> {
-    return Container.get(AuroraStore).execute('SELECT * FROM somewhere')
+    return Container.get(Aurora).execute('SELECT * FROM somewhere')
   }
 }
 
