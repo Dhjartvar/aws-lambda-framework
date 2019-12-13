@@ -18,5 +18,6 @@ export default class SlackNotifier extends BaseNotifier {
    */
   notify(message: unknown, color?: SlackNotificationColor | string): Promise<IncomingWebhookResult | void> {
     if (Container.get('environment') !== Environment.Production) return super.notify(String(message), color)
+    else return Promise.resolve()
   }
 }
