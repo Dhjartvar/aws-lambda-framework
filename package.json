@@ -12,6 +12,8 @@
   "author": "dhjartvar",
   "version": "0.0.1",
   "dependencies": {
+    "fp-ts": "^2.3.0",
+    "io-ts": "^2.0.1",
     "lambda-slack-notifier": "^1.0.4",
     "mysql2": "^2.0.2",
     "pg": "^7.14.0"
