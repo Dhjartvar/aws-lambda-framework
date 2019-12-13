@@ -12,7 +12,7 @@
   "author": "dhjartvar",
   "version": "0.0.1",
   "dependencies": {
-    "lambda-slack-notifier": "^1.0.3",
+    "lambda-slack-notifier": "^1.0.4",
     "mysql2": "^2.0.2",
     "pg": "^7.14.0"
   },
