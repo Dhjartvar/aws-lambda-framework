@@ -1,17 +1,17 @@
 import Store from '../container/Database'
 import Container, { Service } from 'typedi'
-import { DatabaseToken } from '../container/DatabaseToken'
-import RedshiftConfig from '../storage/RedshiftConfig'
 import { Environment } from '../container/Environment'
 import {
   Client as RedshiftConnection,
   Pool as RedshiftPool,
   Client,
   QueryResult,
-  PoolClient as RedshiftPoolClient
+  PoolClient as RedshiftPoolClient,
+  ConnectionConfig as RedshiftConfig,
+  PoolConfig as RedshiftPoolConfig
 } from 'pg'
 
-@Service({ id: DatabaseToken })
+@Service()
 export default class Redshift implements Store {
   private connection?: RedshiftConnection
   private pool?: RedshiftPool
@@ -22,32 +22,20 @@ export default class Redshift implements Store {
     host: process.env.REDSHIFT_HOST,
     password: process.env.REDSHIFT_PASS,
     user: process.env.REDSHIFT_USER,
-    port: process.env.REDSHIFT_PORT ? parseInt(process.env.REDSHIFT_PORT) : undefined,
-    connectionTimeoutMillis: parseInt(process.env.REDSHIFT_CONNECTION_TIMEOUT ?? '0')
+    port: process.env.REDSHIFT_PORT ? parseInt(process.env.REDSHIFT_PORT) : undefined
   }
-
-  constructor() {
-    this.validateConfig()
-  }
-
-  protected validateConfig() {
-    if (
-      !process.env.REDSHIFT_CONNECTION_STRING ||
-      (!process.env.REDSHIFT_HOST &&
-        !process.env.REDSHIFT_DB &&
-        !process.env.REDSHIFT_USER &&
-        !process.env.REDSHIFT_PASS)
-    )
-      throw `Missing properties in Redshift config.
-      Please provide either REDSHIFT_CONNECTION_STRING
-      or REDSHIFT_HOST, REDSHIFT_DB, REDSHIFT_USER and REDSHIFT_PASS`
+  readonly poolConfig: RedshiftPoolConfig = {
+    ...this.config,
+    ...{
+      connectionTimeoutMillis: parseInt(process.env.REDSHIFT_CONNECTION_TIMEOUT ?? '0')
+    }
   }
 
   protected createPool(): RedshiftPool {
     try {
-      return new RedshiftPool(this.config)
+      return new RedshiftPool(this.poolConfig)
     } catch (err) {
-      throw `Encountered ${err} while creating Aurora pool with config: ${this.config}`
+      throw `Encountered ${err} while creating Aurora pool with config: ${this.poolConfig}`
     }
   }
 
