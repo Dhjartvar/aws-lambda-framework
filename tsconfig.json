@@ -8,7 +8,7 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "/opt/nodejs/framework/*": ["src/lambda/layers/framework/*"]
+      "@services/*": ["src/services/*"]
     },
     "typeRoots": ["./types", "node_modules/@types", "@types/node"],
     "types": ["node", "jest"],
