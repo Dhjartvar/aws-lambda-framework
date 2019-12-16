@@ -3,7 +3,7 @@ import BaseNotifier from 'lambda-slack-notifier'
 import { Context } from 'aws-lambda'
 import { SlackNotificationColor } from 'lambda-slack-notifier/dist/SlackNotificationColor'
 import { IncomingWebhookResult } from '@slack/webhook'
-import { Environment } from 'src/container/Environment'
+import { Environment } from '../container/Environment'
 
 @Service()
 export default class SlackNotifier extends BaseNotifier {
@@ -15,7 +15,7 @@ export default class SlackNotifier extends BaseNotifier {
    * Override notify function to only notify when in production
    */
   notify(message: unknown, color?: SlackNotificationColor | string): Promise<IncomingWebhookResult | void> {
-    if (Container.get('environment') !== Environment.Production || !this.webhookUrl) return Promise.resolve()
+    if (Container.get('environment') !== Environment.Production) return Promise.resolve()
     else return super.notify(String(message), color)
   }
 }
