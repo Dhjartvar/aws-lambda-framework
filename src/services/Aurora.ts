@@ -1,32 +1,29 @@
-import mysql, { Connection as AuroraConnection, Pool as AuroraPool } from 'mysql2/promise'
+import mysql, {
+  Connection as AuroraConnection,
+  Pool as AuroraPool,
+  ConnectionOptions as AuroraConfig,
+  PoolOptions as AuroraPoolConfig
+} from 'mysql2/promise'
 import Database from '../container/Database'
 import Container, { Service } from 'typedi'
-import { DatabaseToken } from '../container/DatabaseToken'
-import AuroraConfig from '../storage/AuroraConfig'
 import { Environment } from '../container/Environment'
 
-@Service({ id: DatabaseToken })
+@Service()
 export default class Aurora implements Database {
   private connection?: AuroraConnection
   private pool?: AuroraPool
-  readonly config: AuroraConfig = {
-    connectionLimit: process.env.AURORA_CONNECTION_LIMIT ? parseInt(process.env.AURORA_CONNECTION_LIMIT) : 10,
-    connectTimeout: process.env.AURORA_CONNECTION_TIMEOUT ? parseInt(process.env.AURORA_CONNECTION_TIMEOUT) : 10,
+  private config: AuroraConfig = {
     host: process.env.AURORA_HOST,
     database: process.env.AURORA_DB,
     user: process.env.AURORA_USER,
     password: process.env.AURORA_PASS
   }
-
-  constructor() {
-    this.validateConfig()
-  }
-
-  protected validateConfig() {
-    if (process.env.AURORA_USER) throw 'Missing Aurora credential: AURORA_USER'
-    if (process.env.AURORA_PASS) throw 'Missing Aurora credential: AURORA_PASS'
-    if (process.env.AURORA_HOST) throw 'Missing Aurora credential: AURORA_HOST'
-    if (process.env.AURORA_DB) throw 'Missing Aurora credential: AURORA_DB'
+  readonly poolConfig: AuroraPoolConfig = {
+    ...this.config,
+    ...{
+      connectionLimit: process.env.AURORA_CONNECTION_LIMIT ? parseInt(process.env.AURORA_CONNECTION_LIMIT) : 10,
+      connectTimeout: process.env.AURORA_CONNECTION_TIMEOUT ? parseInt(process.env.AURORA_CONNECTION_TIMEOUT) : 10
+    }
   }
 
   protected async connect(): Promise<AuroraConnection> {
@@ -39,9 +36,9 @@ export default class Aurora implements Database {
 
   protected createPool(): AuroraPool {
     try {
-      return mysql.createPool(this.config)
+      return mysql.createPool(this.poolConfig)
     } catch (err) {
-      throw `Encountered ${err} while creating Aurora pool with config: ${this.config}`
+      throw `Encountered ${err} while creating Aurora pool with config: ${this.poolConfig}`
     }
   }
 
