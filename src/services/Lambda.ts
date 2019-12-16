@@ -25,11 +25,13 @@ export default class Lambda extends AWSLambda {
     payload?: any,
     invocationType: string = 'RequestResponse'
   ): Promise<AWSLambda.InvocationResponse> {
-    return super.invoke({
-      FunctionName: functionName,
-      Payload: payload ? typeof payload === 'string' ? payload : JSON.stringify(payload) : undefined,
-      ClientContext: Buffer.from(JSON.stringify(Container.get('context'))).toString('base64'),
-      InvocationType: invocationType
-    }).promise()
+    return super
+      .invoke({
+        FunctionName: functionName,
+        Payload: payload ? (typeof payload === 'string' ? payload : JSON.stringify(payload)) : undefined,
+        ClientContext: Buffer.from(JSON.stringify(Container.get('context'))).toString('base64'),
+        InvocationType: invocationType
+      })
+      .promise()
   }
 }
