@@ -2,9 +2,11 @@ import { Context, APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda
 import { HttpStatusCode } from '../response/HttpStatusCode'
 import APIGatewayResponse from '../response/APIGatewayResponse'
 import { Container } from 'typedi'
-import SlackNotifier from 'src/services/SlackNotifier'
-import { DatabaseToken } from 'src/container/DatabaseToken'
-import { Environment } from 'src/container/Environment'
+import SlackNotifier from 'lambda-slack-notifier'
+import { Environment } from '../container/Environment'
+import Aurora from '@services/Aurora'
+import Redshift from '@services/Redshift'
+require('dotenv').config()
 
 export default abstract class Lambda {
   readonly event: APIGatewayProxyEvent
@@ -27,9 +29,8 @@ export default abstract class Lambda {
     Container.set('event', this.event)
     Container.set('query-string-parameters', this.queryStringParameters)
     Container.set('path-parameters', this.pathParameters)
-    Container.set('context', this.pathParameters)
+    Container.set('context', this.context)
     Container.set('environment', process.env.NODE_ENV ?? Environment.Development)
-    Container.set('slack-webhook', process.env.SLACK_WEBHOOK)
     Container.set('pooling', process.env.pooling ?? true)
     Container.set('logging', process.env.logging ?? false)
   }
@@ -41,32 +42,26 @@ export default abstract class Lambda {
       return APIGatewayResponse.build(HttpStatusCode.Ok, await this.invoke())
     } catch (e) {
       console.error(e)
-      Container.get(SlackNotifier).notify(e)
+      await Container.get(SlackNotifier).notify(e)
       return APIGatewayResponse.build(e.statusCode || HttpStatusCode.InternalServerError, e.errorMessage || e)
     } finally {
-      await Promise.all(Container.getMany(DatabaseToken).map(database => database.end()))
+      await Promise.all([Container.get(Aurora).end(), Container.get(Redshift).end()])
     }
   }
 
-  public setEnvironment(environment: string) {
+  setEnvironment(environment: string) {
     Container.set('environment', environment)
 
     return this
   }
 
-  public setSlackWebhook(webhook: string) {
+  setSlackWebhook(webhook: string) {
     Container.set('slack-webhook', webhook)
 
     return this
   }
 
-  public setPooling(enabled: boolean) {
-    Container.set('pooling', enabled)
-
-    return this
-  }
-
-  public setLogging(enabled: boolean) {
+  setPooling(enabled: boolean) {
     Container.set('pooling', enabled)
 
     return this
