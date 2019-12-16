@@ -1,4 +1,4 @@
-import Lambda from '../lambda/Lambda'
+import BaseLambda from '../lambda/BaseLambda'
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
 import Container from 'typedi'
 import Aurora from '@services/Aurora'
@@ -6,7 +6,7 @@ import { TestRequestType, TestRequest } from './TestRequest'
 import { Environment } from '../container/Environment'
 import Validator from '@services/Validator'
 
-export class TestLambda extends Lambda {
+export class TestLambda extends BaseLambda {
   request: TestRequest
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
