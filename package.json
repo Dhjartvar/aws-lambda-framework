@@ -12,6 +12,7 @@
   "author": "dhjartvar",
   "version": "0.0.1",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "fp-ts": "^2.3.0",
     "io-ts": "^2.0.1",
     "lambda-slack-notifier": "^1.0.4",
