@@ -1,23 +1,26 @@
-import Lambda from 'src/lambda/Lambda'
+import Lambda from '../lambda/Lambda'
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
 import Container from 'typedi'
-import Aurora from 'src/services/Aurora'
-import { validate } from 'src/validate/validator'
-import { RequestType, Request } from 'src/example/Request'
+import Aurora from '@services/Aurora'
+import { TestRequestType, TestRequest } from './TestRequest'
+import { Environment } from '../container/Environment'
+import Validator from '@services/Validator'
 
-class TestLambda extends Lambda {
+export class TestLambda extends Lambda {
+  request: TestRequest
+
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
-    Container.set('request', validate(this.body!, RequestType))
+    this.request = Container.get(Validator).validate(this.body!, TestRequestType)
   }
 
   invoke(): Promise<any> {
-    return Container.get(Aurora).execute('SELECT * FROM somewhere')
+    return Container.get(Aurora).execute('SELECT * FROM countries')
   }
 }
 
 exports.handler = (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> =>
   new TestLambda(event, context)
-    .setEnvironment('dev')
+    .setEnvironment(Environment.Development)
     .setPooling(false)
     .handler()
