@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "target": "ES2017",
+    "emitDecoratorMetadata": true,
+    "target": "es5",
+    "lib": ["es6"],
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@services/*": ["src/services/*"]
+      "@services/*": ["src/framework/services/*"]
     },
     "typeRoots": ["./types", "node_modules/@types", "@types/node"],
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "reflect-metadata"],
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "inlineSourceMap": true
