@@ -1,11 +1,15 @@
 import { Context, APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda'
-import { HttpStatusCode } from '../response/HttpStatusCode'
-import APIGatewayResponse from '../response/APIGatewayResponse'
+import { HttpStatusCode } from './enums/HttpStatusCode'
+import APIGatewayResponse from './response/APIGatewayResponse'
 import { Container } from 'typedi'
-import SlackNotifier from 'lambda-slack-notifier'
-import { Environment } from '../container/Environment'
+import SlackNotifier from '@services/SlackNotifier'
+import { Environment } from './enums/Environment'
 import Aurora from '@services/Aurora'
 import Redshift from '@services/Redshift'
+import { RegionName } from 'aws-sdk/clients/dynamodb'
+import { Region } from './enums/Region'
+import AuroraConfig from './interfaces/AuroraConfig'
+import { PoolOptions, ConnectionOptions } from 'mysql2'
 require('dotenv').config()
 
 export default abstract class BaseLambda {
@@ -30,9 +34,9 @@ export default abstract class BaseLambda {
     Container.set('query-string-parameters', this.queryStringParameters)
     Container.set('path-parameters', this.pathParameters)
     Container.set('context', this.context)
+    Container.set('region', process.env.REGION ?? 'eu-central-1')
     Container.set('environment', process.env.NODE_ENV ?? Environment.Development)
-    Container.set('pooling', process.env.pooling ?? true)
-    Container.set('logging', process.env.logging ?? false)
+    Container.set('logging', process.env.LOGGING ?? false)
   }
 
   abstract async invoke(): Promise<any>
@@ -42,27 +46,27 @@ export default abstract class BaseLambda {
       return APIGatewayResponse.build(HttpStatusCode.Ok, await this.invoke())
     } catch (e) {
       console.error(e)
-      await Container.get(SlackNotifier).notify(e)
-      return APIGatewayResponse.build(e.statusCode || HttpStatusCode.InternalServerError, e.errorMessage || e)
+      await Container.get(SlackNotifier).notify(e.message ?? e)
+      return APIGatewayResponse.build(e.statusCode ?? HttpStatusCode.InternalServerError, e.message ?? e)
     } finally {
       await Promise.all([Container.get(Aurora).end(), Container.get(Redshift).end()])
     }
   }
 
-  setEnvironment(environment: string) {
+  setEnvironment(environment: Environment) {
     Container.set('environment', environment)
 
     return this
   }
 
-  setSlackWebhook(webhook: string) {
-    Container.set('slack-webhook', webhook)
+  setRegion(region: Region) {
+    Container.set('region', region)
 
     return this
   }
 
-  setPooling(enabled: boolean) {
-    Container.set('pooling', enabled)
+  setLogging(enabled: boolean) {
+    Container.set('logging', enabled)
 
     return this
   }
