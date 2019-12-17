@@ -1,6 +1,6 @@
-import Store from '../container/Database'
+import Connection from '../interfaces/Connection'
 import Container, { Service } from 'typedi'
-import { Environment } from '../container/Environment'
+import { Environment } from '../enums/Environment'
 import {
   Client as RedshiftConnection,
   Pool as RedshiftPool,
@@ -12,8 +12,9 @@ import {
 } from 'pg'
 
 @Service()
-export default class Redshift implements Store {
+export default class Redshift implements Connection {
   private connection?: RedshiftConnection
+  private pooling: boolean = true
   private pool?: RedshiftPool
   private poolConnections: RedshiftPoolClient[] = []
   readonly config: RedshiftConfig = {
@@ -31,7 +32,7 @@ export default class Redshift implements Store {
     }
   }
 
-  protected createPool(): RedshiftPool {
+  private createPool(): RedshiftPool {
     try {
       return new RedshiftPool(this.poolConfig)
     } catch (err) {
@@ -39,7 +40,7 @@ export default class Redshift implements Store {
     }
   }
 
-  protected async connect(): Promise<RedshiftConnection> {
+  private async connect(): Promise<RedshiftConnection> {
     try {
       let connection = new Client(this.config)
       await connection.connect()
@@ -51,11 +52,11 @@ export default class Redshift implements Store {
 
   async execute(sql: string, inputs?: any[]): Promise<unknown> {
     let formattedSql = this.replaceQuestionMarks(sql)
-    if (Container.get('pooling')) return this.poolExecute(formattedSql, inputs)
+    if (this.pooling) return this.poolExecute(formattedSql, inputs)
     else return this.connectionExecute(formattedSql, inputs)
   }
 
-  protected async poolExecute(sql: string, inputs?: any[]): Promise<unknown> {
+  private async poolExecute(sql: string, inputs?: any[]): Promise<unknown> {
     if (!this.pool) this.pool = this.createPool()
 
     let index = await this.connectAndGetIndex()
@@ -84,7 +85,7 @@ export default class Redshift implements Store {
     }
   }
 
-  protected async connectionExecute(sql: string, inputs?: any[]): Promise<unknown> {
+  private async connectionExecute(sql: string, inputs?: any[]): Promise<unknown> {
     if (!this.connection) this.connection = await this.connect()
 
     try {

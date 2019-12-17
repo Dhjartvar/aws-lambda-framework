@@ -1,6 +1,6 @@
-import Container from "typedi"
-import Validator from './Validator'
-import { TestRequest, TestRequestType } from "../example/TestRequest"
+import Container from 'typedi'
+import Validator from './InputValidator'
+import { TestRequest, TestRequestType } from '../../example/TestRequest'
 
 describe('Validator', () => {
   beforeEach(() => {
@@ -28,7 +28,9 @@ describe('Validator', () => {
       string: 'test'
     }
 
-    expect(() => { let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType) }).toThrow()
+    expect(() => {
+      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+    }).toThrow()
   })
 
   it('should fail because number is a string', () => {
@@ -39,7 +41,9 @@ describe('Validator', () => {
       string: 'test'
     }
 
-    expect(() => { let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType) }).toThrow()
+    expect(() => {
+      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+    }).toThrow()
   })
 
   it('should fail because string is a number', () => {
@@ -50,7 +54,9 @@ describe('Validator', () => {
       string: 123
     }
 
-    expect(() => { let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType) }).toThrow()
+    expect(() => {
+      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+    }).toThrow()
   })
 
   it('should fail because string is missing', () => {
@@ -60,6 +66,8 @@ describe('Validator', () => {
       number: 123
     }
 
-    expect(() => { let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType) }).toThrow()
+    expect(() => {
+      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+    }).toThrow()
   })
 })

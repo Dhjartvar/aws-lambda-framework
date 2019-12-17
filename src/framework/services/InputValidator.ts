@@ -1,18 +1,16 @@
 import { Service } from 'typedi'
 import { isRight } from 'fp-ts/lib/Either'
-import * as t from 'io-ts'
+import { Type } from 'io-ts'
 import { inspect } from 'util'
+import Validator from '../interfaces/Validator'
 
 @Service()
-export default class Validator {
+export default class InputValidator implements Validator {
   /**
    * Validate objects or JSON strings with io-ts and return them if valid
    * @returns the validated input
    */
-  validate<ReturnType, Validator extends t.Type<ReturnType>>(
-    input: object | string | null,
-    type: Validator
-  ): ReturnType {
+  validate<ReturnType, Validator extends Type<ReturnType>>(input: object, type: Validator): ReturnType {
     if (!input) throw `Invalid input: ${input}`
     if (typeof input === 'string') input = this.parseJson(input)
 

@@ -4,13 +4,14 @@ import mysql, {
   ConnectionOptions as AuroraConfig,
   PoolOptions as AuroraPoolConfig
 } from 'mysql2/promise'
-import Database from '../container/Database'
+import Connection from '../interfaces/Connection'
 import Container, { Service } from 'typedi'
-import { Environment } from '../container/Environment'
+import { Environment } from '../enums/Environment'
 
 @Service()
-export default class Aurora implements Database {
+export default class Aurora implements Connection {
   private connection?: AuroraConnection
+  private pooling: boolean = true
   private pool?: AuroraPool
   private config: AuroraConfig = {
     host: process.env.AURORA_HOST,
@@ -18,15 +19,21 @@ export default class Aurora implements Database {
     user: process.env.AURORA_USER,
     password: process.env.AURORA_PASS
   }
-  readonly poolConfig: AuroraPoolConfig = {
+  private poolConfig: AuroraPoolConfig = {
     ...this.config,
     ...{
-      connectionLimit: process.env.AURORA_CONNECTION_LIMIT ? parseInt(process.env.AURORA_CONNECTION_LIMIT) : 10,
-      connectTimeout: process.env.AURORA_CONNECTION_TIMEOUT ? parseInt(process.env.AURORA_CONNECTION_TIMEOUT) : 10
+      connectionLimit: parseInt(process.env.AURORA_CONNECTION_LIMIT ?? '10'),
+      connectTimeout: parseInt(process.env.AURORA_CONNECTION_TIMEOUT ?? '10')
     }
   }
 
-  protected async connect(): Promise<AuroraConnection> {
+  configure(config: AuroraConfig, pooling: boolean = true, poolConfig: AuroraPoolConfig) {
+    this.config = config
+    this.pooling = pooling
+    if (poolConfig) this.poolConfig = { ...config, ...poolConfig }
+  }
+
+  private async connect(): Promise<AuroraConnection> {
     try {
       return mysql.createConnection(this.config)
     } catch (err) {
@@ -34,7 +41,7 @@ export default class Aurora implements Database {
     }
   }
 
-  protected createPool(): AuroraPool {
+  private createPool(): AuroraPool {
     try {
       return mysql.createPool(this.poolConfig)
     } catch (err) {
@@ -43,11 +50,11 @@ export default class Aurora implements Database {
   }
 
   async execute(sql: string, inputs?: any[]): Promise<unknown> {
-    if (Container.get('pooling')) return this.poolExecute(sql, inputs)
+    if (this.pooling) return this.poolExecute(sql, inputs)
     else return this.connectionExecute(sql, inputs)
   }
 
-  protected async poolExecute(sql: string, inputs?: any[]): Promise<unknown> {
+  private async poolExecute(sql: string, inputs?: any[]): Promise<unknown> {
     if (!this.pool) this.pool = this.createPool()
 
     try {
@@ -58,7 +65,7 @@ export default class Aurora implements Database {
     }
   }
 
-  protected async connectionExecute(sql: string, inputs?: any[]): Promise<unknown> {
+  private async connectionExecute(sql: string, inputs?: any[]): Promise<unknown> {
     if (!this.connection) this.connection = await this.connect()
 
     try {
