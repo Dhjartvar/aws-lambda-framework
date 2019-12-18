@@ -2,7 +2,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "target": "es5",
+    "target": "es6",
     "lib": ["es6"],
     "module": "commonjs",
     "declaration": true,
@@ -10,7 +10,11 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@services/*": ["src/framework/services/*"]
+      "@framework/*": ["src/framework/*"],
+      "@services/*": ["src/framework/services/*"],
+      "@symbols/*": ["src/framework/symbols/*"],
+      "@enums/*": ["src/framework/enums/*"],
+      "@interfaces/*": ["src/framework/interfaces/*"]
     },
     "typeRoots": ["./types", "node_modules/@types", "@types/node"],
     "types": ["node", "jest", "reflect-metadata"],
