@@ -1,7 +1,7 @@
 import Container from 'typedi'
 import SlackNotifier from './SlackNotifier'
 import { Environment } from '../enums/Environment'
-import { testContext } from '../../test/LambdaTestContext'
+import { testContext } from '../../utilities/LambdaTestContext'
 require('dotenv').config()
 
 describe('SlackNotifier', () => {

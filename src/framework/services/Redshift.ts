@@ -1,5 +1,4 @@
 import Connection from '../interfaces/Connection'
-import Container, { Service } from 'typedi'
 import { Environment } from '../enums/Environment'
 import {
   Client as RedshiftConnection,
@@ -10,8 +9,11 @@ import {
   ConnectionConfig as RedshiftConfig,
   PoolConfig as RedshiftPoolConfig
 } from 'pg'
+import { injectable } from 'inversify'
+import LambdaContainer from '@framework/LambdaContainer'
+import { Property } from '@framework/symbols/Property'
 
-@Service()
+@injectable()
 export default class Redshift implements Connection {
   private connection?: RedshiftConnection
   private pooling: boolean = true
@@ -106,6 +108,6 @@ export default class Redshift implements Connection {
 
   async end(): Promise<void> {
     if (this.connection) await this.connection.end()
-    if (Container.get('environment') === Environment.Development && this.pool) await this.pool.end()
+    if (LambdaContainer.get(Property.ENVIRONMENT) === Environment.Test && this.pool) await this.pool.end()
   }
 }

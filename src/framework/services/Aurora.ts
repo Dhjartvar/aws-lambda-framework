@@ -5,10 +5,12 @@ import mysql, {
   PoolOptions as AuroraPoolConfig
 } from 'mysql2/promise'
 import Connection from '../interfaces/Connection'
-import Container, { Service } from 'typedi'
 import { Environment } from '../enums/Environment'
+import { injectable } from 'inversify'
+import { Property } from '@framework/symbols/Property'
+import LambdaContainer from '@framework/LambdaContainer'
 
-@Service()
+@injectable()
 export default class Aurora implements Connection {
   private connection?: AuroraConnection
   private pooling: boolean = true
@@ -22,8 +24,7 @@ export default class Aurora implements Connection {
   private poolConfig: AuroraPoolConfig = {
     ...this.config,
     ...{
-      connectionLimit: parseInt(process.env.AURORA_CONNECTION_LIMIT ?? '10'),
-      connectTimeout: parseInt(process.env.AURORA_CONNECTION_TIMEOUT ?? '10')
+      connectionLimit: parseInt(process.env.AURORA_CONNECTION_LIMIT ?? '10')
     }
   }
 
@@ -78,6 +79,6 @@ export default class Aurora implements Connection {
 
   async end(): Promise<void> {
     if (this.connection) await this.connection.end()
-    if (Container.get('environment') === Environment.Development && this.pool) await this.pool.end()
+    if (LambdaContainer.get(Property.ENVIRONMENT) === Environment.Test && this.pool) await this.pool.end()
   }
 }

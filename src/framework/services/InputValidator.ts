@@ -1,10 +1,10 @@
-import { Service } from 'typedi'
 import { isRight } from 'fp-ts/lib/Either'
 import { Type } from 'io-ts'
 import { inspect } from 'util'
 import Validator from '../interfaces/Validator'
+import { injectable } from 'inversify'
 
-@Service()
+@injectable()
 export default class InputValidator implements Validator {
   /**
    * Validate objects or JSON strings with io-ts and return them if valid

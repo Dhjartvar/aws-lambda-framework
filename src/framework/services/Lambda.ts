@@ -1,9 +1,11 @@
-import Container, { Service, Inject } from 'typedi'
 import { Lambda as AWSLambda } from 'aws-sdk'
+import { injectable, inject } from 'inversify'
+import { Property } from '@framework/symbols/Property'
+import LambdaContainer from '@framework/LambdaContainer'
 
-@Service()
+@injectable()
 export default class Lambda extends AWSLambda {
-  constructor(@Inject('region') region: string) {
+  constructor(@inject(Property.REGION) region: string) {
     if (!region) throw 'Missing config for Lambda: region. Region can be set using process.env.REGION'
     super({ region: region })
   }
@@ -29,7 +31,7 @@ export default class Lambda extends AWSLambda {
       .invoke({
         FunctionName: functionName,
         Payload: payload ? (typeof payload === 'string' ? payload : JSON.stringify(payload)) : undefined,
-        ClientContext: Buffer.from(JSON.stringify(Container.get('context'))).toString('base64'),
+        ClientContext: Buffer.from(JSON.stringify(LambdaContainer.get(Property.CONTEXT))).toString('base64'),
         InvocationType: invocationType
       })
       .promise()

@@ -1,12 +1,8 @@
-import Container from 'typedi'
-import Validator from './InputValidator'
+import InputValidator from './InputValidator'
 import { TestRequest, TestRequestType } from '../../example/TestRequest'
+import LambdaContainer from '../LambdaContainer'
 
 describe('Validator', () => {
-  beforeEach(() => {
-    Container.set(Validator, new Validator())
-  })
-
   it('should validate the input correctly', () => {
     let request: TestRequest = {
       id: 123,
@@ -15,7 +11,7 @@ describe('Validator', () => {
       string: 'test'
     }
 
-    let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+    let validatedRequest: TestRequest = LambdaContainer.get(InputValidator).validate(request, TestRequestType)
 
     expect(validatedRequest).toBeDefined()
   })
@@ -29,7 +25,7 @@ describe('Validator', () => {
     }
 
     expect(() => {
-      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+      let validatedRequest: TestRequest = LambdaContainer.get(InputValidator).validate(request, TestRequestType)
     }).toThrow()
   })
 
@@ -42,7 +38,7 @@ describe('Validator', () => {
     }
 
     expect(() => {
-      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+      let validatedRequest: TestRequest = LambdaContainer.get(InputValidator).validate(request, TestRequestType)
     }).toThrow()
   })
 
@@ -55,7 +51,7 @@ describe('Validator', () => {
     }
 
     expect(() => {
-      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+      let validatedRequest: TestRequest = LambdaContainer.get(InputValidator).validate(request, TestRequestType)
     }).toThrow()
   })
 
@@ -67,7 +63,7 @@ describe('Validator', () => {
     }
 
     expect(() => {
-      let validatedRequest: TestRequest = Container.get(Validator).validate(request, TestRequestType)
+      let validatedRequest: TestRequest = LambdaContainer.get(InputValidator).validate(request, TestRequestType)
     }).toThrow()
   })
 })
