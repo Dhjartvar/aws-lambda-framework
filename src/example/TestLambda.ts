@@ -1,22 +1,27 @@
 import BaseLambda from '../framework/BaseLambda'
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
-import Container from 'typedi'
 import Aurora from '@services/Aurora'
 import { TestRequestType, TestRequest } from './TestRequest'
-import Validator from '@services/InputValidator'
+import InputValidator from '@services/InputValidator'
 import Redshift from '@services/Redshift'
+import { Property } from '@framework/symbols/Property'
+import LambdaContainer from '@framework/LambdaContainer'
 
 export class TestLambda extends BaseLambda {
   request: TestRequest
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
-    this.request = Container.get(Validator).validate(this.body!, TestRequestType)
+    this.request = LambdaContainer.get(InputValidator).validate(
+      LambdaContainer.get<object>(Property.EVENT_BODY),
+      TestRequestType
+    )
   }
 
   async invoke(): Promise<any> {
-    await Container.get(Redshift).execute('SELECT * FROM flydata.countries')
-    return Container.get(Aurora).execute('SELECT * FROM countries')
+    throw 'test'
+    await LambdaContainer.get(Redshift).execute('SELECT * FROM flydata.countries')
+    return LambdaContainer.get(Aurora).execute('SELECT * FROM countries')
   }
 }
 
