@@ -2,7 +2,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "target": "es6",
+    "target": "ES6",
     "lib": ["es6"],
     "module": "commonjs",
     "declaration": true,
@@ -10,19 +10,16 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@framework/*": ["src/framework/*"],
-      "@services/*": ["src/framework/services/*"],
-      "@symbols/*": ["src/framework/symbols/*"],
-      "@enums/*": ["src/framework/enums/*"],
-      "@interfaces/*": ["src/framework/interfaces/*"]
+      "@framework/*": ["src/framework/*"]
     },
     "typeRoots": ["./types", "node_modules/@types", "@types/node"],
     "types": ["node", "jest", "reflect-metadata"],
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "rootDirs": ["src", "tests"]
   },
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"],
-  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
+  "include": ["./src/**/*.tsx", "./src/**/*.ts", "./tests/**/*.tsx", "./tests/**/*.ts"]
 }
