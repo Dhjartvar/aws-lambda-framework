@@ -28,10 +28,10 @@
     "@types/moment-timezone": "^0.5.12",
     "@types/mysql2": "github:types/mysql2",
     "@types/pg": "^7.11.2",
-    "aws-sdk": "^2.587.0",
+    "aws-sdk": "^2.593.0",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
-    "ts-jest": "^24.0.2",
+    "ts-jest": "^24.2.0",
     "typescript": "^3.7.3"
   },
   "files": [
