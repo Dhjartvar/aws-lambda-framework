@@ -1,11 +1,10 @@
-import BaseLambda from '../framework/BaseLambda'
+import BaseLambda from '../../src/framework/BaseLambda'
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
-import Aurora from '@services/Aurora'
-import { TestRequestType, TestRequest } from './TestRequest'
-import InputValidator from '@services/InputValidator'
-import Redshift from '@services/Redshift'
-import { Property } from '@framework/symbols/Property'
-import LambdaContainer from '@framework/LambdaContainer'
+import { TestRequestType, TestRequest } from './constants/TestRequest'
+import InputValidator from '../../src/framework/services/InputValidator'
+import { Property } from '../../src/framework/symbols/Property'
+import LambdaContainer from '../../src/framework/LambdaContainer'
+import DynamoDB from '../../src/framework/services/DynamoDB'
 
 export class TestLambda extends BaseLambda {
   request: TestRequest
@@ -19,9 +18,9 @@ export class TestLambda extends BaseLambda {
   }
 
   async invoke(): Promise<any> {
-    throw 'test'
-    await LambdaContainer.get(Redshift).execute('SELECT * FROM flydata.countries')
-    return LambdaContainer.get(Aurora).execute('SELECT * FROM countries')
+    return LambdaContainer.get(DynamoDB)
+      .scan({ TableName: process.env.DYNAMODB_TEST_TABLE! })
+      .promise()
   }
 }
 

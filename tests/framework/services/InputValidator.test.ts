@@ -1,8 +1,8 @@
-import InputValidator from './InputValidator'
-import { TestRequest, TestRequestType } from '../../example/TestRequest'
-import LambdaContainer from '../LambdaContainer'
+import InputValidator from '../../../src/framework/services/InputValidator'
+import LambdaContainer from '../../../src/framework/LambdaContainer'
+import { TestRequest, TestRequestType } from '../constants/TestRequest'
 
-describe('Validator', () => {
+describe('InputValidator', () => {
   it('should validate the input correctly', () => {
     let request: TestRequest = {
       id: 123,
