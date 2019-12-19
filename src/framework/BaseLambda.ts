@@ -1,24 +1,19 @@
 import { Context, APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda'
-import { HttpStatusCode } from '@enums/HttpStatusCode'
-import { Environment } from '@enums/Environment'
+import { HttpStatusCode } from '@framework/enums/HttpStatusCode'
 import LambdaContainer from '@framework/LambdaContainer'
-import LambdaFunction from '@interfaces/LambdaFunction'
-import SlackNotifier from '@services/SlackNotifier'
+import LambdaFunction from '@framework/interfaces/LambdaFunction'
+import SlackNotifier from '@framework/services/SlackNotifier'
 import { Property } from '@framework/symbols/Property'
-import Aurora from '@services/Aurora'
-import Redshift from '@services/Redshift'
-require('dotenv').config()
+import Aurora from '@framework/services/Aurora'
+import Redshift from '@framework/services/Redshift'
+import AWS from 'aws-sdk'
 
 export default abstract class BaseLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
     LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
-    let eventBody = typeof event.body === 'string' ? JSON.parse(event.body) : event.body
-    LambdaContainer.bind<object>(Property.EVENT_BODY).toConstantValue(eventBody)
-    LambdaContainer.bind<string>(Property.REGION).toConstantValue(process.env.REGION ?? 'eu-central-1')
-    LambdaContainer.bind<string>(Property.ENVIRONMENT).toConstantValue(process.env.NODE_ENV ?? Environment.Development)
-    LambdaContainer.bind<boolean>(Property.LOGGING).toConstantValue(
-      process.env.LOGGING ? JSON.parse(process.env.LOGGING) : false
+    LambdaContainer.bind<object>(Property.EVENT_BODY).toConstantValue(
+      typeof event.body === 'string' ? JSON.parse(event.body) : event.body
     )
   }
 
@@ -26,6 +21,7 @@ export default abstract class BaseLambda implements LambdaFunction {
 
   async handler(): Promise<APIGatewayProxyResult> {
     try {
+      let test = new AWS.DynamoDB.DocumentClient()
       return this.APIGatewayResponse(HttpStatusCode.Ok, await this.invoke())
     } catch (e) {
       console.error(e)
