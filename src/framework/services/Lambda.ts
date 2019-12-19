@@ -1,18 +1,13 @@
-import { Lambda as AWSLambda } from 'aws-sdk'
-import { injectable, inject } from 'inversify'
+import AWS from 'aws-sdk'
+import { injectable } from 'inversify'
 import { Property } from '@framework/symbols/Property'
 import LambdaContainer from '@framework/LambdaContainer'
 
 @injectable()
-export default class Lambda extends AWSLambda {
-  constructor(@inject(Property.REGION) region: string) {
-    if (!region) throw 'Missing config for Lambda: region. Region can be set using process.env.REGION'
-    super({ region: region })
-  }
-
+export default class Lambda extends AWS.Lambda {
   /**
-   * Method for invoking another Lambda function. Uses the invoke super function, but parses payload and ClientContext for you,
-   * and always returns a promise.
+   * Method for invoking another Lambda function. Uses the invoke super function,
+   * but parses payload and ClientContext and always returns a promise.
    * @param functionName The name of the Lambda function to be invoked
    * @param payload Input to send to the Lambda function. If input is an object, it is automatically stringified.
    * @param invocationType A Lambda function can be invoked synchronously (RequestResponse), asynchronously (Event) or as a dryrun (DryRun).
@@ -26,7 +21,7 @@ export default class Lambda extends AWSLambda {
     functionName: string,
     payload?: any,
     invocationType: string = 'RequestResponse'
-  ): Promise<AWSLambda.InvocationResponse> {
+  ): Promise<AWS.Lambda.InvocationResponse> {
     return super
       .invoke({
         FunctionName: functionName,
