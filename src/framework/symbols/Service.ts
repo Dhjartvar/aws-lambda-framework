@@ -1,9 +1,9 @@
 export const Service = {
-  CONNECTION: Symbol.for('Connection'),
-  VALIDATOR: Symbol.for('Validator'),
-  NOTIFIER: Symbol.for('Notifier'),
+  INPUT_VALIDATOR: Symbol.for('InputValidator'),
+  SLACK_NOTIFIER: Symbol.for('SlackNotifier'),
+  AURORA: Symbol.for('Aurora'),
+  REDSHIFT: Symbol.for('Redshift'),
   LAMBDA: Symbol.for('Lambda'),
   DYNAMODB: Symbol.for('DynamoDB'),
-  S3: Symbol.for('S3'),
-  CONTEXT: Symbol.for('Context')
+  S3: Symbol.for('S3')
 }
