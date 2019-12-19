@@ -1,16 +1,24 @@
 {
   "name": "aws-lambda-framework",
-  "description": "Send Slack notifications via AWS Lambda functions with auto-generated cloudwatch logs link for the invocation.",
-  "main": "dist/SlackNotifier.js",
-  "types": "dist/SlackNotifier.d.ts",
+  "description": "A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, and using AWS services",
+  "main": "dist/aws-lambda-framework.js",
+  "types": "dist/aws-lambda-framework.d.ts",
+  "scripts": {},
   "keywords": [
     "lambda",
     "aws",
     "serverless",
-    "framework"
+    "functions",
+    "framework",
+    "ioc"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dhjartvar/aws-lambda-framework"
+  },
   "author": "dhjartvar",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "license": "MIT",
   "dependencies": {
     "dotenv": "^8.2.0",
     "fp-ts": "^2.3.0",
