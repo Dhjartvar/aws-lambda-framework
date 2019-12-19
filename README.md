@@ -1,6 +1,6 @@
 # AWS Lambda Framework
 
-A framework for simplifying writing Lambda functions in typescript on AWS featuring IoC (InversifyJS) with services for input validation (io-ts), sending slack notifications (lambda-slack-notifier) and using AWS services (such as using DynamoDB, Aurora, Redshift and more)
+A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, and using AWS services
 
 # Installation
 
