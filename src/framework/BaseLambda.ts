@@ -6,7 +6,6 @@ import SlackNotifier from '@framework/services/SlackNotifier'
 import { Property } from '@framework/symbols/Property'
 import Aurora from '@framework/services/Aurora'
 import Redshift from '@framework/services/Redshift'
-import AWS from 'aws-sdk'
 
 export default abstract class BaseLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -21,7 +20,6 @@ export default abstract class BaseLambda implements LambdaFunction {
 
   async handler(): Promise<APIGatewayProxyResult> {
     try {
-      let test = new AWS.DynamoDB.DocumentClient()
       return this.APIGatewayResponse(HttpStatusCode.Ok, await this.invoke())
     } catch (e) {
       console.error(e)
