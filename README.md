@@ -60,7 +60,8 @@ export const TestRequestType = t.interface({
 export type TestRequest = t.TypeOf<typeof TestRequestType>
 ```
 
-#Environment variables
+# Environment variables
+
 The framework uses environment variables for the most basic configuration of services. Note that the environment variable is also used in some of these services, e.g. to disable sending Slack notifications unless the environment is set to production and closing connection pools in test environments.
 
 Environment
@@ -92,7 +93,7 @@ Redshift
 - REDSHIFT_PASS
 - REDSHIFT_CONNECTIONS_LIMIT
 
-#Roadmap
+# Roadmap
 
 ##More AWS services
 
