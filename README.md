@@ -10,14 +10,14 @@ npm i aws-lambda-framework
 
 # Usage
 
-```
+```typescript
 // file TestLambda.ts
 
-import { BaseLambda, LambdaContainer, Property, InputValidator, DynamoDB }
+import { BaseLambda, LambdaContainer, Property, InputValidator, DynamoDB } from 'aws-lambda-framework'
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
 import { TestRequestType, TestRequest } from './TestRequest'
 
-export class TestLambda extends BaseLambda {
+export default class TestLambda extends BaseLambda {
   request: TestRequest
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -39,7 +39,7 @@ exports.handler = (event: APIGatewayProxyEvent, context: Context): Promise<APIGa
   new TestLambda(event, context).handler()
 ```
 
-```
+```typescript
 // file TestRequest.ts
 
 import * as t from 'io-ts'
@@ -52,5 +52,4 @@ export const TestRequestType = t.interface({
 })
 
 export type TestRequest = t.TypeOf<typeof TestRequestType>
-
 ```
