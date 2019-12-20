@@ -16,6 +16,12 @@ export default abstract class BaseLambda implements LambdaFunction {
     )
   }
 
+  useSlack(webhook: string) {
+    process.env.SLACK_WEBHOOK = webhook
+
+    return this
+  }
+
   abstract async invoke(): Promise<any>
 
   async handler(): Promise<APIGatewayProxyResult> {
