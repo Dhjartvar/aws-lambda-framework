@@ -99,3 +99,7 @@ Redshift
 ##Travis-CI
 
 ##CodeCov
+
+##Issue tracking
+
+##Publish on npm
