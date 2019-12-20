@@ -31,7 +31,7 @@ export default class Redshift implements Connection {
   poolConfig: RedshiftPoolConfig = {
     ...this.config,
     ...{
-      connectionTimeoutMillis: parseInt(process.env.REDSHIFT_CONNECTION_TIMEOUT ?? '0')
+      max: parseInt(process.env.REDSHIFT_CONNECTIONS_LIMIT ?? '0')
     }
   }
 
