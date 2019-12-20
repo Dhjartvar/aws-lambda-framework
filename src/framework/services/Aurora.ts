@@ -27,7 +27,7 @@ export default class Aurora implements Connection {
   poolConfig: AuroraPoolConfig = {
     ...this.config,
     ...{
-      connectionLimit: parseInt(process.env.AURORA_CONNECTION_LIMIT ?? '10')
+      connectionLimit: parseInt(process.env.AURORA_CONNECTIONS_LIMIT ?? '10')
     }
   }
 
