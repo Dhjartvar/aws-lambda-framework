@@ -1,4 +1,4 @@
-import { TestLambda } from './TestLambda'
+import TestLambda from './TestLambda'
 import { testEvent } from './constants/LambdaTestEvent'
 import { testContext } from './constants/LambdaTestContext'
 import { HttpStatusCode } from '../../src/framework/enums/HttpStatusCode'

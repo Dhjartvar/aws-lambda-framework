@@ -6,7 +6,7 @@ import { Property } from '../../src/framework/symbols/Property'
 import LambdaContainer from '../../src/framework/LambdaContainer'
 import DynamoDB from '../../src/framework/services/DynamoDB'
 
-export class TestLambda extends BaseLambda {
+export default class TestLambda extends BaseLambda {
   request: TestRequest
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
