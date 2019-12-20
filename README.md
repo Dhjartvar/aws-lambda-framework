@@ -10,6 +10,8 @@ npm i aws-lambda-framework
 
 # Usage
 
+In the code below I've provided a simple show-case of how to use the framework for making a Lambda function with input validation that uses the DynamoDB service to scan a table. The result returned from the service will be always be wrapped inside the body of an HTTP response, such that the function can easily be used in conjunction with API Gateway. Should an error occur, it will be logged, a notification will be send to a Slack channel (given a provided incoming webhook for that channel) and the error will be sent back in the body of the HTTP response.
+
 ```typescript
 // file TestLambda.ts
 
@@ -38,6 +40,8 @@ export default class TestLambda extends BaseLambda {
 exports.handler = (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> =>
   new TestLambda(event, context).handler()
 ```
+
+Below is a mock of how to define an interface for validation with the io-ts library, which the InputValidator is based on.
 
 ```typescript
 // file TestRequest.ts
