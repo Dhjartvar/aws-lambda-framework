@@ -1,0 +1,10 @@
+dist/tests
+docs/
+src/
+.nojekyll
+.npmignore
+.prettierrc.js
+.travis.yml
+jest.config.json
+tsconfig.json
+aws-lambda-framework-*.tgz
