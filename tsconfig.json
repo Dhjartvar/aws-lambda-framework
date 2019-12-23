@@ -18,7 +18,8 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "inlineSourceMap": true,
-    "rootDirs": ["src", "tests"]
+    "rootDirs": ["src", "tests"],
+    "removeComments": true
   },
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"],
   "include": ["./src/**/*.tsx", "./src/**/*.ts", "./tests/**/*.tsx", "./tests/**/*.ts"]
