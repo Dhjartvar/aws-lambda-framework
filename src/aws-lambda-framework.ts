@@ -1,29 +1,16 @@
-import LambdaContainer from '@framework/LambdaContainer'
-import BaseLambda from '@framework/BaseLambda'
-import { Environment } from '@framework/enums/Environment'
-import { Region } from '@framework/enums/Region'
-import { HttpStatusCode } from '@framework/enums/HttpStatusCode'
-import Aurora from '@framework/services/Aurora'
-import Redshift from '@framework/services/Redshift'
-import InputValidator from '@framework/services/InputValidator'
-import SlackNotifier from '@framework/services/SlackNotifier'
-import S3 from '@framework/services/S3'
-import DynamoDB from '@framework/services/DynamoDB'
-import Lambda from '@framework/services/Lambda'
-import { Property } from '@framework/symbols/Property'
 
-export {
-  LambdaContainer,
-  BaseLambda,
-  Environment,
-  Region,
-  HttpStatusCode,
-  Aurora,
-  Redshift,
-  InputValidator,
-  SlackNotifier,
-  S3,
-  DynamoDB,
-  Lambda,
-  Property
-}
+export { HttpStatusCode } from './framework/enums/HttpStatusCode'
+export { Environment } from './framework/enums/Environment'
+export { Property } from './framework/symbols/Property'
+export { Region } from './framework/enums/Region'
+export { Aurora } from './framework/services/Aurora'
+export { Redshift } from './framework/services/Redshift'
+export { InputValidator } from './framework/services/InputValidator'
+export { SlackNotifier } from './framework/services/SlackNotifier'
+export { DynamoDB } from './framework/services/DynamoDB'
+import AWS from 'aws-sdk'
+export const S3 = AWS.S3
+export const Lambda = AWS.Lambda
+export { BaseLambda } from './framework/BaseLambda'
+export { LambdaContainer } from './framework/LambdaContainer'
+
