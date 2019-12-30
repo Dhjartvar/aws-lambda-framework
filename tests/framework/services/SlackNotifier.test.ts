@@ -1,9 +1,6 @@
-import SlackNotifier from '../../../src/framework/services/SlackNotifier'
 import { testContext } from '../constants/LambdaTestContext'
-import { Property } from '../../../src/framework/symbols/Property'
-import LambdaContainer from '../../../src/framework/LambdaContainer'
 import { Context } from 'aws-lambda'
-import { Environment } from '../../../src/framework/enums/Environment'
+import { LambdaContainer, SlackNotifier, Property, Environment } from '../../../src/aws-lambda-framework'
 
 describe('SlackNotifier', () => {
   beforeAll(() => {
