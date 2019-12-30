@@ -8,14 +8,11 @@ import {
   PoolConfig as RedshiftPoolConfig
 } from 'pg'
 import { injectable } from 'inversify'
-import LambdaContainer from '@framework/LambdaContainer'
 import Connection from '@framework/interfaces/Connection'
-import { Environment } from '@framework/enums/Environment'
-import { Property } from '@framework/symbols/Property'
-import { QUERY_ERROR, CONNECTION_ERROR } from '@framework/constants/Errors'
+import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
 
 @injectable()
-export default class Redshift implements Connection {
+export class Redshift implements Connection {
   private connection?: RedshiftConnection
   private pool?: RedshiftPool
   private poolConnections: RedshiftPoolClient[] = []
@@ -35,29 +32,11 @@ export default class Redshift implements Connection {
     }
   }
 
-  setConfig(config: RedshiftConfig) {
-    this.config = config
-
-    return this
-  }
-
-  setPoolConfig(poolConfig: RedshiftPoolConfig) {
-    this.poolConfig = poolConfig
-
-    return this
-  }
-
-  setPooling(enabled: boolean) {
-    this.pooling = enabled
-
-    return this
-  }
-
   private createPool(): RedshiftPool {
     try {
       return new RedshiftPool(this.poolConfig)
     } catch (err) {
-      throw CONNECTION_ERROR(err, this.constructor.name, this.poolConfig)
+      throw Error(err)
     }
   }
 
@@ -67,7 +46,7 @@ export default class Redshift implements Connection {
       await connection.connect()
       return connection
     } catch (err) {
-      throw CONNECTION_ERROR(err, this.constructor.name, this.config)
+      throw Error(err)
     }
   }
 
@@ -86,7 +65,7 @@ export default class Redshift implements Connection {
       let result: QueryResult = await this.poolConnections[index].query(sql, inputs)
       return result.rows
     } catch (err) {
-      throw QUERY_ERROR(err, sql, inputs)
+      throw Error(err)
     } finally {
       this.poolConnections[index].release()
       delete this.poolConnections[index]
@@ -102,7 +81,7 @@ export default class Redshift implements Connection {
       this.poolConnections.push(await this.pool!.connect())
       return this.poolConnections.length - 1
     } catch (err) {
-      throw CONNECTION_ERROR(err, this.constructor.name, this.poolConfig)
+      throw Error(err)
     }
   }
 
@@ -113,7 +92,7 @@ export default class Redshift implements Connection {
       let result: QueryResult = await this.connection.query(sql, inputs)
       return result.rows
     } catch (err) {
-      throw QUERY_ERROR(err, sql, inputs)
+      throw new Error(err)
     }
   }
 
