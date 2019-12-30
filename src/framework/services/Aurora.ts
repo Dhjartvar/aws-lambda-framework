@@ -2,21 +2,16 @@ import mysql, {
   Connection as AuroraConnection,
   Pool as AuroraPool,
   ConnectionOptions as AuroraConfig,
-  PoolOptions as AuroraPoolConfig,
-  RowDataPacket,
-  OkPacket
+  PoolOptions as AuroraPoolConfig
 } from 'mysql2/promise'
 import { injectable } from 'inversify'
-import LambdaContainer from '@framework/LambdaContainer'
-import { Environment } from '@framework/enums/Environment'
 import Connection from '@framework/interfaces/Connection'
-import { Property } from '@framework/symbols/Property'
-import { QUERY_ERROR, CONNECTION_ERROR } from '@framework/constants/Errors'
+import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
 
 @injectable()
-export default class Aurora implements Connection {
-  private connection?: AuroraConnection
-  private pool?: AuroraPool
+export class Aurora implements Connection {
+  connection?: AuroraConnection
+  pool?: AuroraPool
   pooling: boolean = true
   config: AuroraConfig = {
     host: process.env.AURORA_HOST,
@@ -31,41 +26,26 @@ export default class Aurora implements Connection {
     }
   }
 
-  setConfig(config: AuroraConfig) {
-    this.config = config
-
-    return this
-  }
-
-  setPoolConfig(poolConfig: AuroraPoolConfig) {
-    this.poolConfig = poolConfig
-
-    return this
-  }
-
-  setPooling(enabled: boolean) {
-    this.pooling = enabled
-
-    return this
+  private createPool(): AuroraPool {
+    try {
+      return mysql.createPool(this.poolConfig)
+    } catch (err) {
+      throw Error(err)
+    }
   }
 
   private async connect(): Promise<AuroraConnection> {
     try {
       return mysql.createConnection(this.config)
     } catch (err) {
-      throw CONNECTION_ERROR(err, this.constructor.name, this.config)
-    }
-  }
-
-  private createPool(): AuroraPool {
-    try {
-      return mysql.createPool(this.poolConfig)
-    } catch (err) {
-      throw CONNECTION_ERROR(err, this.constructor.name, this.poolConfig)
+      throw Error(err)
     }
   }
 
   async execute(sql: string, inputs?: any[]): Promise<any[]> {
+    if (LambdaContainer.get<boolean>(Property.LOGGING))
+      console.log(`SQL: ${sql}\n${inputs ? `Inputs: [${inputs}]` : ''}`)
+
     if (this.pooling) return this.poolExecute(sql, inputs)
     else return this.connectionExecute(sql, inputs)
   }
@@ -77,7 +57,7 @@ export default class Aurora implements Connection {
       let [rows] = await this.pool.execute(sql, inputs)
       return rows as any[]
     } catch (err) {
-      throw QUERY_ERROR(err, sql, inputs)
+      throw Error(err)
     }
   }
 
@@ -88,7 +68,7 @@ export default class Aurora implements Connection {
       let [rows] = await this.connection.execute(sql, inputs)
       return rows as any[]
     } catch (err) {
-      throw QUERY_ERROR(err, sql, inputs)
+      throw Error(err)
     }
   }
 
