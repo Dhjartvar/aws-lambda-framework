@@ -3,13 +3,12 @@ import { SlackNotificationColor } from 'lambda-slack-notifier/dist/SlackNotifica
 import { Context } from 'aws-lambda'
 import { IncomingWebhookResult } from '@slack/webhook'
 import { injectable, inject } from 'inversify'
-import LambdaContainer from '@framework/LambdaContainer'
 import { Environment } from '@framework/enums/Environment'
 import Notifier from '@framework/interfaces/Notifier'
-import { Property } from '@framework/symbols/Property'
+import { LambdaContainer, Property } from '../../aws-lambda-framework'
 
 @injectable()
-export default class SlackNotifier extends BaseNotifier implements Notifier {
+export class SlackNotifier extends BaseNotifier implements Notifier {
   constructor(@inject(Property.CONTEXT) context: Context) {
     super(process.env.SLACK_WEBHOOK!, context)
   }
