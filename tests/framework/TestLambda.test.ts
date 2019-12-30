@@ -1,7 +1,7 @@
-import TestLambda from './TestLambda'
+import { handler } from './TestLambda'
 import { testEvent } from './constants/LambdaTestEvent'
 import { testContext } from './constants/LambdaTestContext'
-import { HttpStatusCode } from '../../src/framework/enums/HttpStatusCode'
+import { HttpStatusCode } from '../../src/aws-lambda-framework'
 
 let headers = {
   'Access-Control-Allow-Origin': '*',
@@ -11,7 +11,7 @@ let headers = {
 
 describe('TestLambda', () => {
   it('should call the handler and get an APIGatewayResult response back with status code 200', async () => {
-    let res = await new TestLambda(testEvent, testContext).handler()
+    let res = await handler(testEvent, testContext)
 
     expect(res.statusCode).toBe(HttpStatusCode.Ok)
     expect(res.headers).toEqual(headers)

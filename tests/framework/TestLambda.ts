@@ -1,12 +1,8 @@
-import BaseLambda from '../../src/framework/BaseLambda'
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
 import { TestRequestType, TestRequest } from './constants/TestRequest'
-import InputValidator from '../../src/framework/services/InputValidator'
-import { Property } from '../../src/framework/symbols/Property'
-import LambdaContainer from '../../src/framework/LambdaContainer'
-import DynamoDB from '../../src/framework/services/DynamoDB'
+import { BaseLambda, LambdaContainer, InputValidator, Aurora, Redshift, Property } from '../../src/aws-lambda-framework'
 
-export default class TestLambda extends BaseLambda {
+class TestLambda extends BaseLambda {
   request: TestRequest
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -18,11 +14,11 @@ export default class TestLambda extends BaseLambda {
   }
 
   async invoke(): Promise<any> {
-    return LambdaContainer.get(DynamoDB)
-      .scan({ TableName: process.env.DYNAMODB_TEST_TABLE! })
-      .promise()
+    await LambdaContainer.get(Aurora).execute(process.env.AURORA_TEST_QUERY!, [1])
+    return LambdaContainer.get(Redshift).execute(process.env.REDSHIFT_TEST_QUERY!, [1])
   }
 }
 
-exports.handler = (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> =>
-  new TestLambda(event, context).handler()
+export function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
+  return new TestLambda(event, context).useSlack(process.env.SLACK_WEBHOOK!).handler()
+}
