@@ -1,12 +1,7 @@
-import Lambda from '../../../src/framework/services/Lambda'
-import LambdaContainer from '../../../src/framework/LambdaContainer'
+import { LambdaContainer, Lambda } from '../../../src/aws-lambda-framework'
 
 describe('Lambda', () => {
-  it('should list Lambda functions and retrieve more than zero functions', async () => {
-    let res = await LambdaContainer.get(Lambda)
-      .listFunctions()
-      .promise()
-
-    console.log('RES: ', res)
+  it('should resolve when trying to list functions', async () => {
+    await expect(LambdaContainer.get(Lambda).listFunctions().promise()).resolves.toBeDefined()
   })
 })
