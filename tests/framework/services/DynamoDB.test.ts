@@ -1,5 +1,4 @@
-import DynamoDB from '../../../src/framework/services/DynamoDB'
-import LambdaContainer from '../../../src/framework/LambdaContainer'
+import { LambdaContainer, DynamoDB } from '../../../src/aws-lambda-framework'
 
 describe('DynamoDB', () => {
   beforeAll(() => {
