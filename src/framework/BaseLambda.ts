@@ -1,25 +1,16 @@
 import { Context, APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda'
 import { HttpStatusCode } from '@framework/enums/HttpStatusCode'
-import LambdaContainer from '@framework/LambdaContainer'
 import LambdaFunction from '@framework/interfaces/LambdaFunction'
-import SlackNotifier from '@framework/services/SlackNotifier'
-import { Property } from '@framework/symbols/Property'
-import Aurora from '@framework/services/Aurora'
-import Redshift from '@framework/services/Redshift'
+import { LambdaContainer } from './LambdaContainer'
+import { Aurora, Redshift, SlackNotifier, Property } from '../aws-lambda-framework'
 
-export default abstract class BaseLambda implements LambdaFunction {
+export abstract class BaseLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
     LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
     LambdaContainer.bind<object>(Property.EVENT_BODY).toConstantValue(
       typeof event.body === 'string' ? JSON.parse(event.body) : event.body
     )
-  }
-
-  useSlack(webhook: string) {
-    process.env.SLACK_WEBHOOK = webhook
-
-    return this
   }
 
   abstract async invoke(): Promise<any>
@@ -50,5 +41,11 @@ export default abstract class BaseLambda implements LambdaFunction {
     }
 
     return response
+  }
+
+  useSlack(webhook: string) {
+    process.env.SLACK_WEBHOOK = webhook
+
+    return this
   }
 }
