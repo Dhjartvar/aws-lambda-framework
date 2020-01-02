@@ -4,3 +4,5 @@ env.json
 .env
 .vscode
 /coverage
+/docs
+.npmrc
