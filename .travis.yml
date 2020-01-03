@@ -1,18 +1,18 @@
 language: node_js
 
+node_js:
+  - 'node'
+
 branches:
   only:
     - master
 
-before_install:
-  - npm install -g npm@latest
-
-before_script:
-  - npm run setup
-  - npm run build
+install:
+  - npm ci
+  - npm install codecov -g
 
 scripts:
-  - npm install codecov -g
+  - npm run build
   - npm run test
 
 after_success:
