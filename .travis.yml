@@ -10,7 +10,6 @@ before_script:
 
 script:
   - npm run test
-  - npm install codecov -g
 
 after_success:
   - npm run typedoc
@@ -27,13 +26,13 @@ deploy:
   - provider: releases
     api_key: $GITHUB_TOKEN
     file_glob: true
-    file: "aws-lambda-framework-*.tgz"
+    file: 'aws-lambda-framework-*.tgz'
     skip_cleanup: true
     on:
       tags: true
   - provider: npm
     skip_cleanup: true
-    email: "Hjartvar@protonmail.com"
+    email: 'Hjartvar@protonmail.com'
     api_key: $NPM_TOKEN
     on:
       tags: true

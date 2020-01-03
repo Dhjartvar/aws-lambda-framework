@@ -8,6 +8,7 @@
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
+    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
       "@framework/*": ["src/framework/*"]
