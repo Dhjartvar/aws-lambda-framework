@@ -19,7 +19,7 @@ import { BaseLambda, LambdaContainer, Property, InputValidator, DynamoDB } from 
 import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
 import { TestRequestType, TestRequest } from './TestRequest'
 
-export default class TestLambda extends BaseLambda {
+class TestLambda extends BaseLambda {
   request: TestRequest
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -37,8 +37,9 @@ export default class TestLambda extends BaseLambda {
   }
 }
 
-exports.handler = (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> =>
-  new TestLambda(event, context).useSlack(process.env.SLACK_WEBHOOK).handler()
+export function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
+  return new TestLambda(event, context).useSlack(process.env.SLACK_WEBHOOK!).handler()
+}
 ```
 
 Note that most standard configuration (such as the slack webhook or database credentials) can simply be provided as environment variables instead of setting it on the service itself. This will be covered in the next section
