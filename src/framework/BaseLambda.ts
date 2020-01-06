@@ -3,6 +3,7 @@ import { HttpStatusCode } from '@framework/enums/HttpStatusCode'
 import LambdaFunction from '@framework/interfaces/LambdaFunction'
 import { LambdaContainer } from './LambdaContainer'
 import { Aurora, Redshift, SlackNotifier, Property } from '../aws-lambda-framework'
+import jwtDecode from 'jwt-decode'
 
 export abstract class BaseLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -10,6 +11,9 @@ export abstract class BaseLambda implements LambdaFunction {
     LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
     LambdaContainer.bind<object>(Property.EVENT_BODY).toConstantValue(
       typeof event.body === 'string' ? JSON.parse(event.body) : event.body
+    )
+    LambdaContainer.bind<Context>(Property.COGNITO_TOKEN).toConstantValue(
+      event.headers?.Authorization ? JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization))) : undefined
     )
   }
 
