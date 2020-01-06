@@ -6,3 +6,4 @@ env.json
 /coverage
 /docs
 .npmrc
+aws-lambda-framework-*.tgz
