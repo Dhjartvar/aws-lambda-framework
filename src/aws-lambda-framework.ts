@@ -8,6 +8,7 @@ export { InputValidator } from './framework/services/InputValidator'
 export { SlackNotifier } from './framework/services/SlackNotifier'
 export { DynamoDB } from './framework/services/DynamoDB'
 export { Context, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+export { CognitoToken } from './framework/interfaces/CognitoToken'
 import AWS from 'aws-sdk'
 export const S3 = AWS.S3
 export const Lambda = AWS.Lambda
