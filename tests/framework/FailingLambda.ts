@@ -1,5 +1,10 @@
-import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
-import { BaseLambda } from '../../src/aws-lambda-framework'
+import {
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+  BaseLambda,
+  LambdaError
+} from '../../src/aws-lambda-framework'
 
 export default class FailingLambda extends BaseLambda {
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -7,7 +12,7 @@ export default class FailingLambda extends BaseLambda {
   }
 
   async invoke(): Promise<any> {
-    throw Error('hallo')
+    throw new LambdaError()
   }
 }
 
