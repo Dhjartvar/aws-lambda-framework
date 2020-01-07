@@ -1,21 +1,41 @@
-import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
-import { TestRequestType, TestRequest } from './constants/TestRequest'
-import { BaseLambda, LambdaContainer, InputValidator, Aurora, Redshift, Property } from '../../src/aws-lambda-framework'
+import { TestInput } from './constants/TestInput'
+import {
+  BaseLambda,
+  LambdaContainer,
+  InputValidator,
+  Aurora,
+  Property,
+  LambdaError,
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+  ValidationError,
+  CognitoToken,
+  UnauthorizedError
+} from '../../src/aws-lambda-framework'
 
 class TestLambda extends BaseLambda {
-  request: TestRequest
+  input: TestInput
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
-    this.request = LambdaContainer.get(InputValidator).validate(
-      LambdaContainer.get<object>(Property.EVENT_BODY),
-      TestRequestType
-    )
+    const request = LambdaContainer.get<TestInput>(Property.EVENT_BODY)
+    this.input = new TestInput(request.testString, request.testNumber)
   }
 
   async invoke(): Promise<any> {
-    await LambdaContainer.get(Aurora).execute(process.env.AURORA_TEST_QUERY!, [1])
-    return LambdaContainer.get(Redshift).execute(process.env.REDSHIFT_TEST_QUERY!, [1])
+    await this.validateInput()
+    const res = await LambdaContainer.get(Aurora).execute('bad sql', [1])
+    if (!res.success) throw new LambdaError(undefined, 'Test Lambda failed')
+    return res.result
+  }
+
+  private async validateInput() {
+    return LambdaContainer.get(InputValidator)
+      .validateOrReject(this.input)
+      .catch(errors => {
+        throw new ValidationError(errors)
+      })
   }
 }
 
