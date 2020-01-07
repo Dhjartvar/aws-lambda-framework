@@ -7,6 +7,7 @@ import mysql, {
 import { injectable } from 'inversify'
 import Connection from '@framework/interfaces/Connection'
 import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
+import { Result } from '@framework/types/Result'
 
 @injectable()
 export class Aurora implements Connection {
@@ -26,23 +27,7 @@ export class Aurora implements Connection {
     }
   }
 
-  private createPool(): AuroraPool {
-    try {
-      return mysql.createPool(this.poolConfig)
-    } catch (err) {
-      throw Error(err)
-    }
-  }
-
-  private async connect(): Promise<AuroraConnection> {
-    try {
-      return mysql.createConnection(this.config)
-    } catch (err) {
-      throw Error(err)
-    }
-  }
-
-  async execute(sql: string, inputs?: any[]): Promise<any[]> {
+  async execute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
     if (LambdaContainer.get<boolean>(Property.LOGGING))
       console.log(`SQL: ${sql}\n${inputs ? `Inputs: [${inputs}]` : ''}`)
 
@@ -50,25 +35,39 @@ export class Aurora implements Connection {
     else return this.connectionExecute(sql, inputs)
   }
 
-  private async poolExecute(sql: string, inputs?: any[]): Promise<any[]> {
-    if (!this.pool) this.pool = this.createPool()
-
+  private async poolExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
     try {
-      let [rows] = await this.pool.execute(sql, inputs)
-      return rows as any[]
+      if (!this.pool) this.pool = mysql.createPool(this.poolConfig)
+
+      const [rows] = await this.pool.execute(sql, inputs)
+
+      return {
+        success: true,
+        result: rows as any[]
+      }
     } catch (err) {
-      throw Error(err)
+      return {
+        success: false,
+        error: err
+      }
     }
   }
 
-  private async connectionExecute(sql: string, inputs?: any[]): Promise<any[]> {
-    if (!this.connection) this.connection = await this.connect()
-
+  private async connectionExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
     try {
-      let [rows] = await this.connection.execute(sql, inputs)
-      return rows as any[]
+      if (!this.connection) this.connection = await mysql.createConnection(this.config)
+
+      const [rows] = await this.connection.execute(sql, inputs)
+
+      return {
+        success: true,
+        result: rows as any[]
+      }
     } catch (err) {
-      throw Error(err)
+      return {
+        success: false,
+        error: err
+      }
     }
   }
 

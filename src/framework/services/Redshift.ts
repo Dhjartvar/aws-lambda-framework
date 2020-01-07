@@ -1,8 +1,6 @@
 import {
   Client as RedshiftConnection,
   Pool as RedshiftPool,
-  Client,
-  QueryResult,
   PoolClient as RedshiftPoolClient,
   ConnectionConfig as RedshiftConfig,
   PoolConfig as RedshiftPoolConfig
@@ -10,6 +8,7 @@ import {
 import { injectable } from 'inversify'
 import Connection from '@framework/interfaces/Connection'
 import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
+import { Result } from '@framework/types/Result'
 
 @injectable()
 export class Redshift implements Connection {
@@ -32,67 +31,53 @@ export class Redshift implements Connection {
     }
   }
 
-  private createPool(): RedshiftPool {
-    try {
-      return new RedshiftPool(this.poolConfig)
-    } catch (err) {
-      throw Error(err)
-    }
-  }
-
-  private async connect(): Promise<RedshiftConnection> {
-    try {
-      let connection = new Client(this.config)
-      await connection.connect()
-      return connection
-    } catch (err) {
-      throw Error(err)
-    }
-  }
-
-  async execute(sql: string, inputs?: any[]): Promise<any[]> {
-    let formattedSql = this.replaceQuestionMarks(sql)
+  async execute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
+    const formattedSql = this.replaceQuestionMarks(sql)
     if (this.pooling) return this.poolExecute(formattedSql, inputs)
     else return this.connectionExecute(formattedSql, inputs)
   }
 
-  private async poolExecute(sql: string, inputs?: any[]): Promise<any[]> {
-    if (!this.pool) this.pool = this.createPool()
-
-    let index = await this.connectAndGetIndex()
-
+  private async poolExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
+    let index = 0
     try {
-      let result: QueryResult = await this.poolConnections[index].query(sql, inputs)
-      return result.rows
+      if (!this.pool) this.pool = new RedshiftPool(this.poolConfig)
+
+      this.poolConnections.push(await this.pool!.connect())
+      index = this.poolConnections.length - 1
+
+      const result = await this.poolConnections[index].query(sql, inputs)
+      return {
+        success: true,
+        result: result.rows
+      }
     } catch (err) {
-      throw Error(err)
+      return {
+        success: false,
+        error: Error(err)
+      }
     } finally {
       this.poolConnections[index].release()
       delete this.poolConnections[index]
     }
   }
 
-  /**
-   * Opens a connection to the Redshift pool and adds it to an array of open connections
-   * @returns Index of the new connection
-   */
-  private async connectAndGetIndex(): Promise<number> {
+  private async connectionExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
     try {
-      this.poolConnections.push(await this.pool!.connect())
-      return this.poolConnections.length - 1
-    } catch (err) {
-      throw Error(err)
-    }
-  }
+      if (!this.connection) {
+        this.connection = new RedshiftConnection(this.config)
+        await this.connection.connect()
+      }
 
-  private async connectionExecute(sql: string, inputs?: any[]): Promise<any[]> {
-    if (!this.connection) this.connection = await this.connect()
-
-    try {
-      let result: QueryResult = await this.connection.query(sql, inputs)
-      return result.rows
+      const result = await this.connection.query(sql, inputs)
+      return {
+        success: true,
+        result: result.rows
+      }
     } catch (err) {
-      throw new Error(err)
+      return {
+        success: false,
+        error: Error(err)
+      }
     }
   }
 
