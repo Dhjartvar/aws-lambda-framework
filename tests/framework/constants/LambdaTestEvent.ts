@@ -3,8 +3,8 @@ import { APIGatewayProxyEvent } from 'aws-lambda'
 export const testEvent: APIGatewayProxyEvent = {
   body: JSON.stringify({
     id: 1,
-    number: 100,
-    string: 'test',
+    testNumber: 5,
+    testString: 'a valid string',
     boolean: true
   }),
   httpMethod: 'post',
