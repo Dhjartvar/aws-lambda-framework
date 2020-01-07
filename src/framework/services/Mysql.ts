@@ -1,8 +1,8 @@
 import mysql, {
-  Connection as AuroraConnection,
-  Pool as AuroraPool,
-  ConnectionOptions as AuroraConfig,
-  PoolOptions as AuroraPoolConfig
+  Connection as MysqlConnection,
+  Pool as MysqlPool,
+  ConnectionOptions as MysqlConfig,
+  PoolOptions as MysqlPoolConfig
 } from 'mysql2/promise'
 import { injectable } from 'inversify'
 import Connection from '@framework/interfaces/Connection'
@@ -10,20 +10,20 @@ import { LambdaContainer, Environment, Property } from '../../aws-lambda-framewo
 import { Result } from '@framework/types/Result'
 
 @injectable()
-export class Aurora implements Connection {
-  connection?: AuroraConnection
-  pool?: AuroraPool
+export class Mysql implements Connection {
+  connection?: MysqlConnection
+  pool?: MysqlPool
   pooling: boolean = true
-  config: AuroraConfig = {
-    host: process.env.AURORA_HOST,
-    database: process.env.AURORA_DB,
-    user: process.env.AURORA_USER,
-    password: process.env.AURORA_PASS
+  config: MysqlConfig = {
+    host: process.env.MYSQL_HOST,
+    database: process.env.MYSQL_DB,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASS
   }
-  poolConfig: AuroraPoolConfig = {
+  poolConfig: MysqlPoolConfig = {
     ...this.config,
     ...{
-      connectionLimit: parseInt(process.env.AURORA_CONNECTIONS_LIMIT ?? '10')
+      connectionLimit: parseInt(process.env.MYSQL_CONNECTIONS_LIMIT ?? '10')
     }
   }
 

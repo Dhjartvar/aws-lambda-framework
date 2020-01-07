@@ -1,9 +1,9 @@
 import {
-  Client as RedshiftConnection,
-  Pool as RedshiftPool,
-  PoolClient as RedshiftPoolClient,
-  ConnectionConfig as RedshiftConfig,
-  PoolConfig as RedshiftPoolConfig
+  Client as PostgresConnection,
+  Pool as PostgresPool,
+  PoolClient as PostgresPoolClient,
+  ConnectionConfig as PostgresConfig,
+  PoolConfig as PostgresPoolConfig
 } from 'pg'
 import { injectable } from 'inversify'
 import Connection from '@framework/interfaces/Connection'
@@ -11,23 +11,23 @@ import { LambdaContainer, Environment, Property } from '../../aws-lambda-framewo
 import { Result } from '@framework/types/Result'
 
 @injectable()
-export class Redshift implements Connection {
-  private connection?: RedshiftConnection
-  private pool?: RedshiftPool
-  private poolConnections: RedshiftPoolClient[] = []
+export class Postgres implements Connection {
+  private connection?: PostgresConnection
+  private pool?: PostgresPool
+  private poolConnections: PostgresPoolClient[] = []
   pooling: boolean = true
-  config: RedshiftConfig = {
-    connectionString: process.env.REDSHIFT_CONNECTION_STRING,
-    database: process.env.REDSHIFT_DB,
-    host: process.env.REDSHIFT_HOST,
-    password: process.env.REDSHIFT_PASS,
-    user: process.env.REDSHIFT_USER,
-    port: process.env.REDSHIFT_PORT ? parseInt(process.env.REDSHIFT_PORT) : undefined
+  config: PostgresConfig = {
+    connectionString: process.env.Postgres_CONNECTION_STRING,
+    database: process.env.POSTGRES_DB,
+    host: process.env.POSTGRES_HOST,
+    password: process.env.POSTGRES_PASS,
+    user: process.env.POSTGRES_USER,
+    port: process.env.POSTGRES_PORT ? parseInt(process.env.POSTGRES_PORT) : undefined
   }
-  poolConfig: RedshiftPoolConfig = {
+  poolConfig: PostgresPoolConfig = {
     ...this.config,
     ...{
-      max: parseInt(process.env.REDSHIFT_CONNECTIONS_LIMIT ?? '0')
+      max: parseInt(process.env.POSTGRES_CONNECTIONS_LIMIT ?? '0')
     }
   }
 
@@ -40,7 +40,7 @@ export class Redshift implements Connection {
   private async poolExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
     let index = 0
     try {
-      if (!this.pool) this.pool = new RedshiftPool(this.poolConfig)
+      if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
 
       this.poolConnections.push(await this.pool!.connect())
       index = this.poolConnections.length - 1
@@ -64,7 +64,7 @@ export class Redshift implements Connection {
   private async connectionExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
     try {
       if (!this.connection) {
-        this.connection = new RedshiftConnection(this.config)
+        this.connection = new PostgresConnection(this.config)
         await this.connection.connect()
       }
 

@@ -10,30 +10,47 @@ npm i aws-lambda-framework
 
 # Usage
 
-In the code below I've provided a simple show-case of how to use the framework for making a Lambda function with input validation that uses the DynamoDB service to scan a table. The result returned from the service will be always be wrapped inside the body of an HTTP response, such that the function can easily be used in conjunction with API Gateway. Should an error occur, it will be logged, a notification will be send to a Slack channel (if an incoming webhook for a channel is provided) and the error will be sent back in the body of the HTTP response.
+In the code below I've provided a simple show-case of how to use the framework for making a Lambda function with input validation that uses the Mysql service to execute a query. The result returned from the service will be always be wrapped inside the body of an HTTP response, such that the function can easily be used in conjunction with API Gateway. Should an error occur, it will be logged, a notification will be send to a Slack channel (if an incoming webhook for a channel is provided) and the error will be sent back in the body of the HTTP response.
 
 ```typescript
 // file TestLambda.ts
 
-import { BaseLambda, LambdaContainer, Property, InputValidator, DynamoDB } from 'aws-lambda-framework'
-import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda'
-import { TestRequestType, TestRequest } from './TestRequest'
+import { TestInput } from './constants/TestInput'
+import {
+  BaseLambda,
+  LambdaContainer,
+  InputValidator,
+  Mysql,
+  Property,
+  LambdaError,
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+  ValidationError
+} from '../../src/aws-lambda-framework'
 
 class TestLambda extends BaseLambda {
-  request: TestRequest
+  input: TestInput
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
-    this.request = LambdaContainer.get(InputValidator).validate(
-      LambdaContainer.get<object>(Property.EVENT_BODY),
-      TestRequestType
-    )
+    const request = LambdaContainer.get<TestInput>(Property.EVENT_BODY)
+    this.input = new TestInput(request.testString, request.testNumber)
   }
 
   async invoke(): Promise<any> {
-    return LambdaContainer.get(DynamoDB)
-      .scan({ TableName: process.env.DYNAMODB_TEST_TABLE! })
-      .promise()
+    await this.validateInput()
+    const res = await LambdaContainer.get(Mysql).execute('bad sql')
+    if (!res.success) throw new LambdaError()
+    return res.result
+  }
+
+  private async validateInput() {
+    return LambdaContainer.get(InputValidator)
+      .validateOrReject(this.input)
+      .catch(errors => {
+        throw new ValidationError(errors)
+      })
   }
 }
 
@@ -43,23 +60,6 @@ export function handler(event: APIGatewayProxyEvent, context: Context): Promise<
 ```
 
 Note that most standard configuration (such as the slack webhook or database credentials) can simply be provided as environment variables instead of setting it on the service itself. This will be covered in the next section
-
-Below is a mock of how to define an interface for validation with the io-ts library, which the InputValidator is based on.
-
-```typescript
-// file TestRequest.ts
-
-import * as t from 'io-ts'
-
-export const TestRequestType = t.interface({
-  id: t.number,
-  number: t.number,
-  string: t.string,
-  boolean: t.boolean
-})
-
-export type TestRequest = t.TypeOf<typeof TestRequestType>
-```
 
 # Environment variables
 
@@ -77,22 +77,22 @@ AWS
 
 - REGION
 
-Aurora
+Mysql
 
-- AURORA_HOST
-- AURORA_DB
-- AURORA_USER
-- AURORA_PASS
-- AURORA_CONNECTIONS_LIMIT
+- MYSQL_HOST
+- MYSQL_DB
+- MYSQL_USER
+- MYSQL_PASS
+- MYSQL_CONNECTIONS_LIMIT
 
-Redshift
+Postgres
 
-- REDSHIFT_HOST
-- REDSHIFT_PORT
-- REDSHIFT_DB
-- REDSHIFT_USER
-- REDSHIFT_PASS
-- REDSHIFT_CONNECTIONS_LIMIT
+- POSTGRES_HOST
+- POSTGRES_PORT
+- POSTGRES_DB
+- POSTGRES_USER
+- POSTGRES_PASS
+- POSTGRES_CONNECTIONS_LIMIT
 
 # Roadmap
 

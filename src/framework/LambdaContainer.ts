@@ -4,6 +4,8 @@ import AWS from 'aws-sdk'
 const S3 = AWS.S3
 const Lambda = AWS.Lambda
 const SSM = AWS.SSM
+const DynamoDB = AWS.DynamoDB
+const DynamoDC = AWS.DynamoDB.DocumentClient
 import { Property } from '@framework/symbols/Property'
 import { Environment } from '@framework/enums/Environment'
 import { Region } from '@framework/enums/Region'
@@ -26,5 +28,7 @@ AWS.config.update({ region: LambdaContainer.get(Property.REGION) })
 LambdaContainer.bind(Lambda).toConstantValue(new Lambda())
 LambdaContainer.bind(S3).toConstantValue(new S3())
 LambdaContainer.bind(SSM).toConstantValue(new SSM())
+LambdaContainer.bind(DynamoDB).toConstantValue(new DynamoDB())
+LambdaContainer.bind(DynamoDC).toConstantValue(new DynamoDC())
 
 export { LambdaContainer }

@@ -2,7 +2,7 @@ import { Context, APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda
 import { HttpStatusCode } from '@framework/enums/HttpStatusCode'
 import LambdaFunction from '@framework/interfaces/LambdaFunction'
 import { LambdaContainer } from './LambdaContainer'
-import { Aurora, Redshift, SlackNotifier, Property } from '../aws-lambda-framework'
+import { Mysql, Postgres, SlackNotifier, Property } from '../aws-lambda-framework'
 import jwtDecode from 'jwt-decode'
 
 export abstract class BaseLambda implements LambdaFunction {
@@ -27,8 +27,8 @@ export abstract class BaseLambda implements LambdaFunction {
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
       return this.APIGatewayResponse(err.statusCode ?? HttpStatusCode.InternalServerError, err)
     } finally {
-      if (LambdaContainer.isBound(Aurora)) await LambdaContainer.get(Aurora).end()
-      if (LambdaContainer.isBound(Redshift)) await LambdaContainer.get(Redshift).end()
+      if (LambdaContainer.isBound(Mysql)) await LambdaContainer.get(Mysql).end()
+      if (LambdaContainer.isBound(Postgres)) await LambdaContainer.get(Postgres).end()
     }
   }
 

@@ -5,11 +5,11 @@ describe('DynamoDB', () => {
     if (!process.env.DYNAMODB_TEST_TABLE) throw 'Missing env var DYNAMODB_TEST_TABLE for DynamoDB.test.ts'
   })
 
-  it('should scan a DynamoDB table and retrieve more than zero rows', async () => {
-    let res = await LambdaContainer.get(DynamoDB)
-      .scan({ TableName: process.env.DYNAMODB_TEST_TABLE! })
-      .promise()
-
-    expect(res.Count).toBeGreaterThan(0)
+  it('should resolve when trying to list tables', async () => {
+    await expect(
+      LambdaContainer.get(DynamoDB)
+        .listTables()
+        .promise()
+    ).resolves.toBeDefined()
   })
 })

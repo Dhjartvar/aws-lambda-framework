@@ -3,7 +3,7 @@ import {
   BaseLambda,
   LambdaContainer,
   InputValidator,
-  Aurora,
+  Mysql,
   Property,
   LambdaError,
   APIGatewayProxyEvent,
@@ -23,8 +23,8 @@ class TestLambda extends BaseLambda {
 
   async invoke(): Promise<any> {
     await this.validateInput()
-    const res = await LambdaContainer.get(Aurora).execute('bad sql', [1])
-    if (!res.success) throw new LambdaError(undefined, 'Test Lambda failed')
+    const res = await LambdaContainer.get(Mysql).execute('bad sql')
+    if (!res.success) throw new LambdaError()
     return res.result
   }
 
