@@ -22,10 +22,10 @@ export abstract class BaseLambda implements LambdaFunction {
   async handler(): Promise<APIGatewayProxyResult> {
     try {
       return this.APIGatewayResponse(HttpStatusCode.Ok, await this.invoke())
-    } catch (e) {
-      console.error(e)
-      await LambdaContainer.get(SlackNotifier).notify(e.message ?? e)
-      return this.APIGatewayResponse(e.statusCode ?? HttpStatusCode.InternalServerError, e.message ?? e)
+    } catch (err) {
+      console.error(err)
+      await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
+      return this.APIGatewayResponse(err.statusCode ?? HttpStatusCode.InternalServerError, err)
     } finally {
       if (LambdaContainer.isBound(Aurora)) await LambdaContainer.get(Aurora).end()
       if (LambdaContainer.isBound(Redshift)) await LambdaContainer.get(Redshift).end()
