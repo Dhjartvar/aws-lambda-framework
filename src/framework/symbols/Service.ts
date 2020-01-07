@@ -5,5 +5,6 @@ export const Service = {
   REDSHIFT: Symbol.for('Redshift'),
   LAMBDA: Symbol.for('Lambda'),
   DYNAMODB: Symbol.for('DynamoDB'),
-  S3: Symbol.for('S3')
+  S3: Symbol.for('S3'),
+  SSM: Symbol.for('SSM')
 }
