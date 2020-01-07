@@ -9,9 +9,7 @@ import {
   APIGatewayProxyEvent,
   Context,
   APIGatewayProxyResult,
-  ValidationError,
-  CognitoToken,
-  UnauthorizedError
+  ValidationError
 } from '../../src/aws-lambda-framework'
 
 class TestLambda extends BaseLambda {
