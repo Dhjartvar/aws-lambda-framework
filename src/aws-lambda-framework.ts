@@ -12,5 +12,9 @@ export { CognitoToken } from './framework/interfaces/CognitoToken'
 import AWS from 'aws-sdk'
 export const S3 = AWS.S3
 export const Lambda = AWS.Lambda
+export const SSM = AWS.SSM
 export { BaseLambda } from './framework/BaseLambda'
 export { LambdaContainer } from './framework/LambdaContainer'
+export { LambdaError } from './framework/errors/LambdaError'
+export { ValidationError } from './framework/errors/ValidationError'
+export { UnauthorizedError } from './framework/errors/UnauthorizedError'
