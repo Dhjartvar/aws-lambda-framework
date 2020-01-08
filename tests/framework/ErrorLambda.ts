@@ -3,7 +3,9 @@ import {
   Context,
   APIGatewayProxyResult,
   BaseLambda,
-  LambdaError
+  LambdaError,
+  LambdaContainer,
+  Mysql
 } from '../../src/aws-lambda-framework'
 
 export default class ErrorLambda extends BaseLambda {
@@ -12,7 +14,8 @@ export default class ErrorLambda extends BaseLambda {
   }
 
   async invoke(): Promise<any> {
-    throw new LambdaError()
+    const res = await LambdaContainer.get(Mysql).execute({ sql: 'bad sql' })
+    if (!res.success) throw new LambdaError(res.error.message, res.error.stack)
   }
 }
 
