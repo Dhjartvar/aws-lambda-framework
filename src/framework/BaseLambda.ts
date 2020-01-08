@@ -1,8 +1,16 @@
-import { Context, APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda'
-import { HttpStatusCode } from '@framework/enums/HttpStatusCode'
 import LambdaFunction from '@framework/interfaces/LambdaFunction'
-import { LambdaContainer } from './LambdaContainer'
-import { Mysql, Postgres, SlackNotifier, Property } from '../aws-lambda-framework'
+import {
+  LambdaContainer,
+  Mysql,
+  Postgres,
+  SlackNotifier,
+  Property,
+  Environment,
+  HttpStatusCode,
+  Context,
+  APIGatewayProxyResult,
+  APIGatewayProxyEvent
+} from '../aws-lambda-framework'
 import jwtDecode from 'jwt-decode'
 
 export abstract class BaseLambda implements LambdaFunction {
@@ -23,7 +31,7 @@ export abstract class BaseLambda implements LambdaFunction {
     try {
       return this.APIGatewayResponse(HttpStatusCode.Ok, await this.invoke())
     } catch (err) {
-      console.error(err)
+      if (process.env.NODE_ENV !== Environment.Test) console.error(err)
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
       return this.APIGatewayResponse(err.statusCode ?? HttpStatusCode.InternalServerError, err)
     } finally {
