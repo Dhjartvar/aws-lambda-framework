@@ -23,8 +23,8 @@ class TestLambda extends BaseLambda {
 
   async invoke(): Promise<any> {
     await this.validateInput()
-    const res = await LambdaContainer.get(Mysql).execute('bad sql')
-    if (!res.success) throw new LambdaError()
+    const res = await LambdaContainer.get(Mysql).execute({ sql: process.env.MYSQL_TEST_QUERY!, inputs: [1] })
+    if (!res.success) throw new LambdaError(res.error.message, res.error.stack)
     return res.result
   }
 
