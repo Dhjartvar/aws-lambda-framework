@@ -11,9 +11,6 @@ let headers = {
 
 describe('FailingLambda', () => {
   it('should call the handler, throw an error and return an APIGatewayResult with status code 500', async () => {
-    testEvent.body = JSON.stringify({
-      test: 'test'
-    })
     let res = await handler(testEvent, testContext)
 
     expect(res.statusCode).toBe(HttpStatusCode.InternalServerError)
