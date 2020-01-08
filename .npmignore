@@ -1,6 +1,7 @@
 dist/tests
 docs/
 src/
+.env
 .nojekyll
 .npmignore
 .prettierrc.js
