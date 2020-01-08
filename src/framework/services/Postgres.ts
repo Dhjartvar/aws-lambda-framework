@@ -9,12 +9,14 @@ import { injectable } from 'inversify'
 import Connection from '@framework/interfaces/Connection'
 import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
 import { Result } from '@framework/types/Result'
+import { Query } from '@framework/interfaces/Query'
+const TRANSACTION_SUCCESS_MESSAGE = 'Succesfully executed all queries in transaction!'
 
 @injectable()
 export class Postgres implements Connection {
-  private connection?: PostgresConnection
-  private pool?: PostgresPool
-  private poolConnections: PostgresPoolClient[] = []
+  connection?: PostgresConnection
+  pool?: PostgresPool
+  poolConnections: PostgresPoolClient[] = []
   pooling: boolean = true
   config: PostgresConfig = {
     connectionString: process.env.Postgres_CONNECTION_STRING,
@@ -31,54 +33,10 @@ export class Postgres implements Connection {
     }
   }
 
-  async execute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
-    const formattedSql = this.replaceQuestionMarks(sql)
-    if (this.pooling) return this.poolExecute(formattedSql, inputs)
-    else return this.connectionExecute(formattedSql, inputs)
-  }
-
-  private async poolExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
-    let index = 0
-    try {
-      if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
-
-      this.poolConnections.push(await this.pool!.connect())
-      index = this.poolConnections.length - 1
-
-      const result = await this.poolConnections[index].query(sql, inputs)
-      return {
-        success: true,
-        result: result.rows
-      }
-    } catch (err) {
-      return {
-        success: false,
-        error: Error(err)
-      }
-    } finally {
-      this.poolConnections[index].release()
-      delete this.poolConnections[index]
-    }
-  }
-
-  private async connectionExecute(sql: string, inputs?: any[]): Promise<Result<any[], Error>> {
-    try {
-      if (!this.connection) {
-        this.connection = new PostgresConnection(this.config)
-        await this.connection.connect()
-      }
-
-      const result = await this.connection.query(sql, inputs)
-      return {
-        success: true,
-        result: result.rows
-      }
-    } catch (err) {
-      return {
-        success: false,
-        error: Error(err)
-      }
-    }
+  async execute(query: Query): Promise<Result<any[], Error>> {
+    query.sql = this.replaceQuestionMarks(query.sql)
+    if (this.pooling) return this.poolExecute(query)
+    else return this.connectionExecute(query)
   }
 
   private replaceQuestionMarks(sql: string): string {
@@ -89,8 +47,116 @@ export class Postgres implements Connection {
     })
   }
 
+  private async poolExecute(query: Query): Promise<Result<any[], Error>> {
+    let index = 0
+    try {
+      if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
+
+      /* this.poolConnections.push(await this.pool!.connect())
+      index = this.poolConnections.length - 1 */
+
+      const result = await this.pool.query(query.sql, query.inputs)
+
+      return {
+        success: true,
+        result: result.rows
+      }
+    } catch (err) {
+      return {
+        success: false,
+        error: Error(err)
+      }
+    }
+  }
+
+  private async connectionExecute(query: Query): Promise<Result<any[], Error>> {
+    try {
+      if (!this.connection) {
+        this.connection = new PostgresConnection(this.config)
+        await this.connection.connect()
+      }
+
+      const result = await this.connection.query(query.sql, query.inputs)
+      return {
+        success: true,
+        result: result.rows
+      }
+    } catch (err) {
+      return {
+        success: false,
+        error: Error(err)
+      }
+    }
+  }
+
+  async executeTransaction(queries: Query[]): Promise<Result<string, Error>> {
+    if (this.pooling) return this.poolExecuteTransaction(queries)
+    else return this.connectionExecuteTransaction(queries)
+  }
+
+  private async poolExecuteTransaction(queries: Query[]): Promise<Result<string, Error>> {
+    let connection: PostgresPoolClient | undefined
+
+    try {
+      if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
+
+      connection = await this.pool.connect()
+
+      await connection.query('BEGIN')
+
+      for (const query of queries) {
+        query.sql = this.replaceQuestionMarks(query.sql)
+        await connection.query(query.sql, query.inputs)
+      }
+
+      await connection.query('COMMIT')
+
+      return {
+        success: true,
+        result: TRANSACTION_SUCCESS_MESSAGE
+      }
+    } catch (err) {
+      if (connection) await connection.query('ROLLBACK')
+      return {
+        success: false,
+        error: err
+      }
+    } finally {
+      if (connection) connection.release()
+    }
+  }
+
+  private async connectionExecuteTransaction(queries: Query[]): Promise<Result<string, Error>> {
+    try {
+      if (!this.connection) {
+        this.connection = new PostgresConnection(this.config)
+        await this.connection.connect()
+      }
+
+      await this.connection.query('BEGIN')
+
+      for (let query of queries) {
+        query.sql = this.replaceQuestionMarks(query.sql)
+        await this.connection.query(query.sql, query.inputs)
+      }
+
+      await this.connection.query('COMMIT')
+
+      return {
+        success: true,
+        result: TRANSACTION_SUCCESS_MESSAGE
+      }
+    } catch (err) {
+      if (this.connection) await this.connection.query('ROLLBACK')
+      return {
+        success: false,
+        error: err
+      }
+    }
+  }
+
   async end(): Promise<void> {
     if (this.connection) await this.connection.end()
-    if (LambdaContainer.get(Property.ENVIRONMENT) === Environment.Test && this.pool) await this.pool.end()
+    if (process.env.NODE_ENV === Environment.Test && this.pool) await this.pool.end()
   }
 }
