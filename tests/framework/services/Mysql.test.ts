@@ -1,36 +1,110 @@
-import { LambdaContainer, Property, Mysql } from '../../../src/aws-lambda-framework'
-require('mysql2/node_modules/iconv-lite').encodingExists('cesu8')
+import { Mysql, Query } from '../../../src/aws-lambda-framework'
+let mysql: Mysql
+const TRANSACTION_SUCCESS_MESSAGE = 'Succesfully executed all queries in transaction!'
 
 describe('Mysql', () => {
   beforeAll(() => {
-    if (!process.env.Mysql_TEST_QUERY) throw 'Missing env var Mysql_TEST_QUERY for Mysql.test.ts'
+    if (!process.env.MYSQL_TEST_QUERY) throw 'Missing env var MYSQL_TEST_QUERY for Mysql.test.ts'
+    mysql = new Mysql()
   })
 
-  it('should query Mysql and retrieve more than zero rows', async () => {
-    LambdaContainer.get(Mysql).pooling = false
-    const res = await LambdaContainer.get(Mysql).execute(process.env.Mysql_TEST_QUERY!, [1])
-    res.expect(res.length).toBeGreaterThan(0)
+  beforeEach(() => {
+    mysql.pooling = true
   })
 
-  it('should query Mysql using a pool and retrieve more than zero rows', async () => {
-    LambdaContainer.get(Mysql).pooling = true
-    const res = await LambdaContainer.get(Mysql).execute(process.env.Mysql_TEST_QUERY!, [1])
-    expect(res.length).toBeGreaterThan(0)
+  it('should execute a query using a pool and return a successful Result containg rows of more than zero', async () => {
+    mysql.pooling = false
+    const query: Query = {
+      sql: process.env.MYSQL_TEST_QUERY!,
+      inputs: [1]
+    }
+    const res = await mysql.execute(query)
+    expect(res.success).toBeTruthy()
+    if (res.success) expect(res.result.length).toBeGreaterThan(0)
   })
 
-  it('should throw query error because of bad sql', async () => {
-    LambdaContainer.get(Mysql).pooling = false
-    LambdaContainer.rebind<boolean>(Property.LOGGING).toConstantValue(true)
-    await expect(LambdaContainer.get(Mysql).execute('bad sql')).rejects.toThrow()
+  it('should execute a query using a pool and return a successful Result containg rows of more than zero when using a pool', async () => {
+    const query: Query = {
+      sql: process.env.MYSQL_TEST_QUERY!,
+      inputs: [1]
+    }
+    const res = await mysql.execute(query)
+    expect(res.success).toBeTruthy()
+    if (res.success) expect(res.result.length).toBeGreaterThan(0)
   })
 
-  it('should throw query error because of bad sql using a pool', async () => {
-    LambdaContainer.get(Mysql).pooling = true
-    LambdaContainer.rebind<boolean>(Property.LOGGING).toConstantValue(false)
-    await expect(LambdaContainer.get(Mysql).execute('bad sql')).rejects.toThrow()
+  it('should return an unsuccessful Result containing an error because of bad sql', async () => {
+    mysql.pooling = false
+    const res = await mysql.execute({ sql: 'bad sql' })
+    expect(res.success).toBeFalsy()
+    if (!res.success) expect(res.error).toBeDefined()
+  })
+
+  it('should return an unsuccessful Result containing an error because of bad sql when using a pool', async () => {
+    const res = await mysql.execute({ sql: 'bad sql' })
+    expect(res.success).toBeFalsy()
+    if (!res.success) expect(res.error).toBeDefined()
+  })
+
+  it('should run a transaction of queries using a pool and return a successful Result with a success message', async () => {
+    const queries: Query[] = [
+      {
+        sql: 'select * from countries'
+      },
+      {
+        sql: 'select * from websites'
+      }
+    ]
+    const res = await mysql.executeTransaction(queries)
+    expect(res.success).toBeTruthy()
+    if (res.success) expect(res.result).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+  })
+
+  it('should run a transaction of queries using a pool and return an unsuccessful Result because of bad sql', async () => {
+    const queries: Query[] = [
+      {
+        sql: 'select * from countries'
+      },
+      {
+        sql: 'bad sql'
+      }
+    ]
+    const res = await mysql.executeTransaction(queries)
+    expect(res.success).toBeFalsy()
+    if (!res.success) expect(res.error).toBeDefined()
+  })
+
+  it('should run a transaction of queries and return a successful Result with a success message', async () => {
+    mysql.pooling = false
+    const queries: Query[] = [
+      {
+        sql: 'select * from countries'
+      },
+      {
+        sql: 'select * from websites'
+      }
+    ]
+    const res = await mysql.executeTransaction(queries)
+    expect(res.success).toBeTruthy()
+    if (res.success) expect(res.result).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+  })
+
+  it('should run a transaction of queries and return an unsuccessful Result because of bad sql', async () => {
+    mysql.pooling = false
+    const queries: Query[] = [
+      {
+        sql: 'select * from countries'
+      },
+      {
+        sql: 'bad sql'
+      }
+    ]
+    const res = await mysql.executeTransaction(queries)
+    expect(res.success).toBeFalsy()
+    if (!res.success) expect(res.error).toBeDefined()
   })
 
   afterAll(async () => {
-    await LambdaContainer.get(Mysql).end()
+    await mysql.end()
   })
 })
