@@ -4,11 +4,8 @@ import {
   APIGatewayProxyResult,
   BaseLambda,
   CognitoToken,
-  Property,
-  LambdaContainer,
   UnauthorizedError
 } from '../../src/aws-lambda-framework'
-import { Result } from './types/Result'
 
 let mockToken: CognitoToken = {
   'cognito:username': 'test',
@@ -25,7 +22,7 @@ let mockToken: CognitoToken = {
   'cognito:groups': ['Users']
 }
 
-export default class FailingLambda extends BaseLambda {
+export default class UnauthorizedErrorLambda extends BaseLambda {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
   }
@@ -43,5 +40,5 @@ export default class FailingLambda extends BaseLambda {
 }
 
 export function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
-  return new FailingLambda(event, context).handler()
+  return new UnauthorizedErrorLambda(event, context).handler()
 }

@@ -1,4 +1,4 @@
-import { handler } from './UnauthorizedLambda'
+import { handler } from './UnauthorizedErrorLambda'
 import { testEvent } from './constants/LambdaTestEvent'
 import { testContext } from './constants/LambdaTestContext'
 import { HttpStatusCode, LambdaContainer, Property, CognitoToken } from '../../src/aws-lambda-framework'
@@ -24,7 +24,7 @@ let mockToken: CognitoToken = {
   'cognito:groups': ['Users']
 }
 
-describe('UnauthorizedLambda', () => {
+describe('UnauthorizedErrorLambda', () => {
   beforeAll(() => {
     // LambdaContainer.rebind(Property.COGNITO_TOKEN).toConstantValue(mockToken)
   })
