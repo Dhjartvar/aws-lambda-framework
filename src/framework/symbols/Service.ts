@@ -1,10 +1,17 @@
 export const Service = {
   INPUT_VALIDATOR: Symbol.for('InputValidator'),
   SLACK_NOTIFIER: Symbol.for('SlackNotifier'),
-  AURORA: Symbol.for('Aurora'),
+  POSTGRES: Symbol.for('Postgres'),
+  MYSQL: Symbol.for('Mysql'),
+  AURORA: Symbol.for('RDS'),
   REDSHIFT: Symbol.for('Redshift'),
   LAMBDA: Symbol.for('Lambda'),
   DYNAMODB: Symbol.for('DynamoDB'),
-  S3: Symbol.for('S3'),
-  SSM: Symbol.for('SSM')
+  DYNAMODC: Symbol.for('DynamoDC'),
+  SSM: Symbol.for('SSM'),
+  SES: Symbol.for('SES'),
+  Kinesis: Symbol.for('Kinesis'),
+  APIGateway: Symbol.for('APIGateway'),
+  CloudWatch: Symbol.for('CloudWatch'),
+  S3: Symbol.for('S3')
 }

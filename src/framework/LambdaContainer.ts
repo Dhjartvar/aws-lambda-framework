@@ -6,6 +6,13 @@ const Lambda = AWS.Lambda
 const SSM = AWS.SSM
 const DynamoDB = AWS.DynamoDB
 const DynamoDC = AWS.DynamoDB.DocumentClient
+const RDS = AWS.RDS
+const Redshift = AWS.Redshift
+const SES = AWS.SES
+const Kinesis = AWS.Kinesis
+const APIGateway = AWS.APIGateway
+const CloudWatch = AWS.CloudWatch
+
 import { Property } from '@framework/symbols/Property'
 import { Environment } from '@framework/enums/Environment'
 import { Region } from '@framework/enums/Region'
@@ -30,5 +37,11 @@ LambdaContainer.bind(S3).toConstantValue(new S3())
 LambdaContainer.bind(SSM).toConstantValue(new SSM())
 LambdaContainer.bind(DynamoDB).toConstantValue(new DynamoDB())
 LambdaContainer.bind(DynamoDC).toConstantValue(new DynamoDC())
+LambdaContainer.bind(RDS).toConstantValue(new RDS())
+LambdaContainer.bind(Redshift).toConstantValue(new Redshift())
+LambdaContainer.bind(SES).toConstantValue(new SES())
+LambdaContainer.bind(Kinesis).toConstantValue(new Kinesis())
+LambdaContainer.bind(APIGateway).toConstantValue(new APIGateway())
+LambdaContainer.bind(CloudWatch).toConstantValue(new CloudWatch())
 
 export { LambdaContainer }

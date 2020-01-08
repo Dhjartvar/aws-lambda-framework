@@ -8,12 +8,19 @@ export { InputValidator } from './framework/services/InputValidator'
 export { SlackNotifier } from './framework/services/SlackNotifier'
 export { Context, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 export { CognitoToken } from './framework/interfaces/CognitoToken'
+export { Query } from './framework/interfaces/Query'
 import AWS from 'aws-sdk'
 export const S3 = AWS.S3
 export const Lambda = AWS.Lambda
 export const SSM = AWS.SSM
 export const DynamoDB = AWS.DynamoDB
 export const DynamoDC = AWS.DynamoDB.DocumentClient
+export const RDS = AWS.RDS
+export const Redshift = AWS.Redshift
+export const SES = AWS.SES
+export const Kinesis = AWS.Kinesis
+export const APIGateway = AWS.APIGateway
+export const CloudWatch = AWS.CloudWatch
 export { BaseLambda } from './framework/BaseLambda'
 export { LambdaContainer } from './framework/LambdaContainer'
 export { LambdaError } from './framework/errors/LambdaError'
