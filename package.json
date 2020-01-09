@@ -44,7 +44,7 @@
     "@types/moment-timezone": "^0.5.12",
     "@types/mysql2": "github:types/mysql2",
     "@types/pg": "^7.11.2",
-    "aws-sdk": "^2.593.0",
+    "aws-sdk": "^2.600.0",
     "codecov": "^3.6.1",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
