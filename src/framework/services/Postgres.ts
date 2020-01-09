@@ -33,7 +33,10 @@ export class Postgres implements Connection {
     }
   }
 
-  async execute(query: Query): Promise<Result<any[], Error>> {
+  async execute<T>(query: Query): Promise<Result<Array<T>, Error>> {
+    if (LambdaContainer.get<boolean>(Property.LOGGING))
+      console.log(`SQL: ${query.sql}\n${query.inputs ? `Inputs: [${query.inputs}]` : ''}`)
+
     query.sql = this.replaceQuestionMarks(query.sql)
     if (this.pooling) return this.poolExecute(query)
     else return this.connectionExecute(query)
@@ -47,19 +50,15 @@ export class Postgres implements Connection {
     })
   }
 
-  private async poolExecute(query: Query): Promise<Result<any[], Error>> {
-    let index = 0
+  private async poolExecute<T>(query: Query): Promise<Result<Array<T>, Error>> {
     try {
       if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
-
-      /* this.poolConnections.push(await this.pool!.connect())
-      index = this.poolConnections.length - 1 */
 
       const result = await this.pool.query(query.sql, query.inputs)
 
       return {
         success: true,
-        result: result.rows
+        rows: result.rows as Array<T>
       }
     } catch (err) {
       return {
@@ -69,7 +68,7 @@ export class Postgres implements Connection {
     }
   }
 
-  private async connectionExecute(query: Query): Promise<Result<any[], Error>> {
+  private async connectionExecute<T>(query: Query): Promise<Result<Array<T>, Error>> {
     try {
       if (!this.connection) {
         this.connection = new PostgresConnection(this.config)
@@ -79,7 +78,7 @@ export class Postgres implements Connection {
       const result = await this.connection.query(query.sql, query.inputs)
       return {
         success: true,
-        result: result.rows
+        rows: result.rows as Array<T>
       }
     } catch (err) {
       return {
@@ -113,7 +112,7 @@ export class Postgres implements Connection {
 
       return {
         success: true,
-        result: TRANSACTION_SUCCESS_MESSAGE
+        rows: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
       if (connection) await connection.query('ROLLBACK')
@@ -144,7 +143,7 @@ export class Postgres implements Connection {
 
       return {
         success: true,
-        result: TRANSACTION_SUCCESS_MESSAGE
+        rows: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
       if (this.connection) await this.connection.query('ROLLBACK')

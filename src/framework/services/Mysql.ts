@@ -30,7 +30,7 @@ export class Mysql implements Connection {
     }
   }
 
-  async execute(query: Query): Promise<Result<any[], Error>> {
+  async execute<T>(query: Query): Promise<Result<Array<T>, Error>> {
     if (LambdaContainer.get<boolean>(Property.LOGGING))
       console.log(`SQL: ${query.sql}\n${query.inputs ? `Inputs: [${query.inputs}]` : ''}`)
 
@@ -38,15 +38,15 @@ export class Mysql implements Connection {
     else return this.connectionExecute(query)
   }
 
-  private async poolExecute(query: Query): Promise<Result<any[], Error>> {
+  private async poolExecute<T>(query: Query): Promise<Result<Array<T>, Error>> {
     try {
       if (!this.pool) this.pool = mysql.createPool(this.poolConfig)
 
-      const [rows] = await this.pool.execute(query.sql, query.inputs)
+      let [rows] = await this.pool.execute(query.sql, query.inputs)
 
       return {
         success: true,
-        result: rows as any[]
+        rows: rows as Array<T>
       }
     } catch (err) {
       return {
@@ -56,7 +56,7 @@ export class Mysql implements Connection {
     }
   }
 
-  private async connectionExecute(query: Query): Promise<Result<any[], Error>> {
+  private async connectionExecute<T>(query: Query): Promise<Result<Array<T>, Error>> {
     try {
       if (!this.connection) this.connection = await mysql.createConnection(this.config)
 
@@ -64,7 +64,7 @@ export class Mysql implements Connection {
 
       return {
         success: true,
-        result: rows as any[]
+        rows: rows as Array<T>
       }
     } catch (err) {
       return {
@@ -96,7 +96,7 @@ export class Mysql implements Connection {
 
       return {
         success: true,
-        result: TRANSACTION_SUCCESS_MESSAGE
+        rows: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
       if (connection) await connection.rollback()
@@ -121,7 +121,7 @@ export class Mysql implements Connection {
 
       return {
         success: true,
-        result: TRANSACTION_SUCCESS_MESSAGE
+        rows: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
       if (this.connection) await this.connection.rollback()
