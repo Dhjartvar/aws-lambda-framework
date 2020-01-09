@@ -20,7 +20,7 @@ describe('Postgres', () => {
     }
     const res = await postgres.execute(query)
     expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.length).toBeGreaterThan(0)
+    if (res.success) expect(res.rows.length).toBeGreaterThan(0)
   })
 
   it('should query Postgres using a pool and retrieve more than zero rows', async () => {
@@ -30,7 +30,7 @@ describe('Postgres', () => {
     }
     const res = await postgres.execute(query)
     expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.length).toBeGreaterThan(0)
+    if (res.success) expect(res.rows.length).toBeGreaterThan(0)
   })
 
   it('should query Postgres using a pool and execute two queries simultanously', async () => {
@@ -47,8 +47,8 @@ describe('Postgres', () => {
     const res = await Promise.all([postgres.execute(queries[0]), postgres.execute(queries[1])])
     expect(res[0].success).toBeTruthy()
     expect(res[1].success).toBeTruthy()
-    if (res[0].success) expect(res[0].result.length).toBeGreaterThan(0)
-    if (res[1].success) expect(res[1].result.length).toBeGreaterThan(0)
+    if (res[0].success) expect(res[0].rows.length).toBeGreaterThan(0)
+    if (res[1].success) expect(res[1].rows.length).toBeGreaterThan(0)
   })
 
   it('should throw query error because of bad sql', async () => {
@@ -77,7 +77,7 @@ describe('Postgres', () => {
     ]
     const res = await postgres.executeTransaction(queries)
     expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+    if (res.success) expect(res.rows).toEqual(TRANSACTION_SUCCESS_MESSAGE)
   })
 
   it('should run a transaction of queries using a pool and return an unsuccessful Result because of bad sql', async () => {
@@ -110,7 +110,7 @@ describe('Postgres', () => {
     ]
     const res = await postgres.executeTransaction(queries)
     expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+    if (res.success) expect(res.rows).toEqual(TRANSACTION_SUCCESS_MESSAGE)
   })
 
   it('should run a transaction of queries and return an unsuccessful Result because of bad sql', async () => {
