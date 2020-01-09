@@ -10,8 +10,8 @@ export const Service = {
   DYNAMODC: Symbol.for('DynamoDC'),
   SSM: Symbol.for('SSM'),
   SES: Symbol.for('SES'),
-  Kinesis: Symbol.for('Kinesis'),
-  APIGateway: Symbol.for('APIGateway'),
-  CloudWatch: Symbol.for('CloudWatch'),
+  KINESIS: Symbol.for('Kinesis'),
+  APIGATEWAY: Symbol.for('APIGateway'),
+  CLOUDWATCH: Symbol.for('CloudWatch'),
   S3: Symbol.for('S3')
 }
