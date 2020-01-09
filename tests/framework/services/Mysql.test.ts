@@ -12,7 +12,7 @@ describe('Mysql', () => {
     mysql.pooling = true
   })
 
-  it('should execute a query using a pool and return a successful Result containg rows of more than zero', async () => {
+  it('should execute a query and return a successful Result containg rows of more than zero', async () => {
     mysql.pooling = false
     const query: Query = {
       sql: process.env.MYSQL_TEST_QUERY!,
