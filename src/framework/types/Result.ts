@@ -1,7 +1,7 @@
 export type Result<Ok, Err> =
   | {
       readonly success: true
-      readonly result: Ok
+      readonly rows: Ok
     }
   | {
       readonly success: false
