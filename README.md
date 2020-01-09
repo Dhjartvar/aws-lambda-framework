@@ -1,6 +1,6 @@
 # AWS Lambda Framework
 
-A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, and using AWS services
+A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, connecting to databases, and using AWS services
 
 # Installation
 
@@ -57,6 +57,24 @@ class TestLambda extends BaseLambda {
 export function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
   return new TestLambda(event, context).useSlack(process.env.SLACK_WEBHOOK!).handler()
 }
+
+// file TestInput.ts
+import { Length, Min, Max, IsInt } from 'class-validator'
+
+export class TestInput {
+  @Length(10, 20)
+  testString: string
+
+  @IsInt()
+  @Min(0)
+  @Max(10)
+  testNumber: number
+
+  constructor(testString: string, testNumber: number) {
+    this.testString = testString
+    this.testNumber = testNumber
+  }
+}
 ```
 
 Note that most standard configuration (such as the slack webhook or database credentials) can simply be provided as environment variables instead of setting it on the service itself. This will be covered in the next section
@@ -103,5 +121,3 @@ Postgres
 ##CodeCov
 
 ##Issue tracking
-
-##Publish on npm
