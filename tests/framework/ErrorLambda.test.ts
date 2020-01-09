@@ -13,7 +13,7 @@ describe('ErrorLambda', () => {
   it('should call the handler, throw an error and return an APIGatewayResult with status code 500', async () => {
     let res = await handler(testEvent, testContext)
 
-    expect(res.statusCode).toBe(HttpStatusCode.BadRequest)
+    expect(res.statusCode).toBe(HttpStatusCode.InternalServerError)
     expect(res.headers).toEqual(headers)
     expect(res.isBase64Encoded).toBeFalsy()
   })
