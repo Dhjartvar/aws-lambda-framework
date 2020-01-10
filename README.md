@@ -4,10 +4,12 @@ A framework for simplifying writing AWS Lambda functions in typescript featuring
 
 For release notes, see the [CHANGELOG](https://github.com/Dhjartvar/aws-lambda-framework/blob/master/CHANGELOG.md)
 
+This project is still in the early stages, any feedback is much appreciated. Please let me know of any services or features you feel could improve this framework!
+
 # Installation
 
 ```
-npm i aws-lambda-framework
+npm i aws-lambda-framework --save
 ```
 
 # Usage
@@ -81,6 +83,33 @@ export class TestInput {
 
 Note that most standard configuration (such as the slack webhook or database credentials) can simply be provided as environment variables instead of setting it on the service itself. This will be covered in the next section
 
+# Services
+
+The framework provides easy access to some of the tools that are often needed when writing Lambda functions. These are injected as singletons into the Container the first time they are called.
+
+## InputValidator
+
+## Mysql
+
+## Postgres
+
+## SlackNotifier
+
+## AWS Services
+
+- APIGateway
+- Aurora
+- Cloudwatch
+- DynamoDB
+- DynamoDC (Document Client)
+- Kinesis
+- Lambda
+- RDS
+- Redshift
+- S3
+- SES
+- SSM
+
 # Environment variables
 
 The framework uses environment variables for the most basic configuration of services. Note that the environment variable is also used in some of these services, e.g. to disable sending Slack notifications unless the environment is set to production and closing connection pools in test environments.
@@ -116,10 +145,10 @@ Postgres
 
 # Roadmap
 
-##More AWS services
+## More AWS services
 
-##Travis-CI
+## Travis-CI
 
-##CodeCov
+## CodeCov
 
-##Issue tracking
+## Issue tracking
