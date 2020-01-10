@@ -1,4 +1,4 @@
-import { Result } from '@framework/types/Result'
+import { Result } from '../types/Result'
 import { Query } from './Query'
 
 export default interface Connection {

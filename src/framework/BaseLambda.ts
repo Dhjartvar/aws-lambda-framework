@@ -1,4 +1,4 @@
-import LambdaFunction from '@framework/interfaces/LambdaFunction'
+import LambdaFunction from './interfaces/LambdaFunction'
 import {
   LambdaContainer,
   Mysql,

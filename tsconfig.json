@@ -10,9 +10,6 @@
     "strict": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "paths": {
-      "@framework/*": ["src/framework/*"]
-    },
     "typeRoots": ["./types", "node_modules/@types", "@types/node"],
     "types": ["node", "jest", "reflect-metadata"],
     "moduleResolution": "node",

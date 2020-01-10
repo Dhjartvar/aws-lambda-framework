@@ -6,10 +6,10 @@ import mysql, {
   PoolConnection as MysqlPoolConnection
 } from 'mysql2/promise'
 import { injectable } from 'inversify'
-import Connection from '@framework/interfaces/Connection'
+import Connection from '../interfaces/Connection'
 import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
-import { Result } from '@framework/types/Result'
-import { Query } from '@framework/interfaces/Query'
+import { Result } from '../types/Result'
+import { Query } from '../interfaces/Query'
 const TRANSACTION_SUCCESS_MESSAGE = 'Succesfully executed all queries in transaction!'
 
 @injectable()

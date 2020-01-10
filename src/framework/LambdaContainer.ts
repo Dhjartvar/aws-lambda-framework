@@ -13,9 +13,9 @@ const Kinesis = AWS.Kinesis
 const APIGateway = AWS.APIGateway
 const CloudWatch = AWS.CloudWatch
 
-import { Property } from '@framework/symbols/Property'
-import { Environment } from '@framework/enums/Environment'
-import { Region } from '@framework/enums/Region'
+import { Property } from './symbols/Property'
+import { Environment } from './enums/Environment'
+import { Region } from './enums/Region'
 require('dotenv').config()
 
 const LambdaContainer = new Container({
