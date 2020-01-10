@@ -1,8 +1,20 @@
 # Changelog for aws-lambda-framework
 
+## [0.2.3] - 2020-01-10
+
+### Fixed
+
+- Reflect.hasOwnMetadata bug by importing reflect-metadata into Services
+
+## [0.2.2] - 2020-01-10
+
+### Changed
+
+- Updated README
+
 ## [0.2.1] - 2020-01-10
 
-### Fix
+### Fixed
 
 - No longer uses typescript paths. This broke type definitions when using the library @ npm.
 
