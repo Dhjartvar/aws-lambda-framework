@@ -6,6 +6,7 @@ import { injectable, inject } from 'inversify'
 import { Environment } from '../enums/Environment'
 import Notifier from '../interfaces/Notifier'
 import { LambdaContainer, Property } from '../../aws-lambda-framework'
+import 'reflect-metadata'
 
 @injectable()
 export class SlackNotifier extends BaseNotifier implements Notifier {

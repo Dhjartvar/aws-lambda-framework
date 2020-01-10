@@ -10,6 +10,7 @@ import Connection from '../interfaces/Connection'
 import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
 import { Result } from '../types/Result'
 import { Query } from '../interfaces/Query'
+import 'reflect-metadata'
 const TRANSACTION_SUCCESS_MESSAGE = 'Succesfully executed all queries in transaction!'
 
 @injectable()
