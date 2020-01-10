@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.2.1] - 2020-01-10
+
+### Fix
+
+- No longer uses typescript paths. This broke type definitions when using the library @ npm.
+
 ## [0.2.0] - 2020-01-09
 
 ### Added
