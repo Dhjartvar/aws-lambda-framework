@@ -11,7 +11,8 @@ import { LambdaContainer, Environment, Property } from '../../aws-lambda-framewo
 import { Result } from '../types/Result'
 import { Query } from '../interfaces/Query'
 import 'reflect-metadata'
-const TRANSACTION_SUCCESS_MESSAGE = 'Succesfully executed all queries in transaction!'
+import { QueryResult } from '../interfaces/QueryResult'
+import { TransactionResult, TRANSACTION_SUCCESS_MESSAGE } from '../interfaces/TransactionResult'
 
 @injectable()
 export class Postgres implements Connection {
@@ -34,7 +35,7 @@ export class Postgres implements Connection {
     }
   }
 
-  async execute<T>(query: Query): Promise<Result<Array<T>, Error>> {
+  async execute<T>(query: Query): Promise<Result<QueryResult<T>, Error>> {
     if (LambdaContainer.get<boolean>(Property.LOGGING))
       console.log(`SQL: ${query.sql}\n${query.inputs ? `Inputs: [${query.inputs}]` : ''}`)
 
@@ -51,7 +52,7 @@ export class Postgres implements Connection {
     })
   }
 
-  private async poolExecute<T>(query: Query): Promise<Result<Array<T>, Error>> {
+  private async poolExecute<T>(query: Query): Promise<Result<QueryResult<T>, Error>> {
     try {
       if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
 
@@ -59,7 +60,9 @@ export class Postgres implements Connection {
 
       return {
         success: true,
-        rows: result.rows as Array<T>
+        result: {
+          rows: result.rows as Array<T>
+        }
       }
     } catch (err) {
       return {
@@ -69,7 +72,7 @@ export class Postgres implements Connection {
     }
   }
 
-  private async connectionExecute<T>(query: Query): Promise<Result<Array<T>, Error>> {
+  private async connectionExecute<T>(query: Query): Promise<Result<QueryResult<T>, Error>> {
     try {
       if (!this.connection) {
         this.connection = new PostgresConnection(this.config)
@@ -79,7 +82,9 @@ export class Postgres implements Connection {
       const result = await this.connection.query(query.sql, query.inputs)
       return {
         success: true,
-        rows: result.rows as Array<T>
+        result: {
+          rows: result.rows as Array<T>
+        }
       }
     } catch (err) {
       return {
@@ -89,12 +94,12 @@ export class Postgres implements Connection {
     }
   }
 
-  async executeTransaction(queries: Query[]): Promise<Result<string, Error>> {
+  async executeTransaction(queries: Query[]): Promise<Result<TransactionResult, Error>> {
     if (this.pooling) return this.poolExecuteTransaction(queries)
     else return this.connectionExecuteTransaction(queries)
   }
 
-  private async poolExecuteTransaction(queries: Query[]): Promise<Result<string, Error>> {
+  private async poolExecuteTransaction(queries: Query[]): Promise<Result<TransactionResult, Error>> {
     let connection: PostgresPoolClient | undefined
 
     try {
@@ -113,7 +118,9 @@ export class Postgres implements Connection {
 
       return {
         success: true,
-        rows: TRANSACTION_SUCCESS_MESSAGE
+        result: {
+          message: TRANSACTION_SUCCESS_MESSAGE
+        }
       }
     } catch (err) {
       if (connection) await connection.query('ROLLBACK')
@@ -126,7 +133,7 @@ export class Postgres implements Connection {
     }
   }
 
-  private async connectionExecuteTransaction(queries: Query[]): Promise<Result<string, Error>> {
+  private async connectionExecuteTransaction(queries: Query[]): Promise<Result<TransactionResult, Error>> {
     try {
       if (!this.connection) {
         this.connection = new PostgresConnection(this.config)
@@ -144,7 +151,9 @@ export class Postgres implements Connection {
 
       return {
         success: true,
-        rows: TRANSACTION_SUCCESS_MESSAGE
+        result: {
+          message: TRANSACTION_SUCCESS_MESSAGE
+        }
       }
     } catch (err) {
       if (this.connection) await this.connection.query('ROLLBACK')
