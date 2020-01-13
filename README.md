@@ -1,5 +1,7 @@
 # AWS Lambda Framework
 
+[![NPM version]](https://www.npmjs.com/package/aws-sdk)
+
 A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, connecting to databases, and using AWS services.
 
 For release notes, see the [CHANGELOG](https://github.com/Dhjartvar/aws-lambda-framework/blob/master/CHANGELOG.md)
