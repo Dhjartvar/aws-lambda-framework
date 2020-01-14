@@ -1,5 +1,13 @@
 # Changelog for aws-lambda-framework
 
+## [0.2.4] - 2020-01-14
+
+## Changed
+
+- Reverted Result success object back to result.
+- Connection.execute now returns a QueryResult containing the rows.
+- Connection.executeTransactions now returns a TransactionResult.
+
 ## [0.2.3] - 2020-01-10
 
 ### Fixed
