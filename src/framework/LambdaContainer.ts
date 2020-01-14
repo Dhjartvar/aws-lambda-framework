@@ -12,6 +12,7 @@ const SES = AWS.SES
 const Kinesis = AWS.Kinesis
 const APIGateway = AWS.APIGateway
 const CloudWatch = AWS.CloudWatch
+const CloudFront = AWS.CloudFront
 
 import { Property } from './symbols/Property'
 import { Environment } from './enums/Environment'
@@ -43,5 +44,6 @@ LambdaContainer.bind(SES).toConstantValue(new SES())
 LambdaContainer.bind(Kinesis).toConstantValue(new Kinesis())
 LambdaContainer.bind(APIGateway).toConstantValue(new APIGateway())
 LambdaContainer.bind(CloudWatch).toConstantValue(new CloudWatch())
+LambdaContainer.bind(CloudFront).toConstantValue(new CloudFront())
 
 export { LambdaContainer }

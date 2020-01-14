@@ -22,6 +22,7 @@ export const SES = AWS.SES
 export const Kinesis = AWS.Kinesis
 export const APIGateway = AWS.APIGateway
 export const CloudWatch = AWS.CloudWatch
+export const CloudFront = AWS.CloudFront
 export { BaseLambda } from './framework/BaseLambda'
 export { LambdaContainer } from './framework/LambdaContainer'
 export { LambdaError } from './framework/errors/LambdaError'
