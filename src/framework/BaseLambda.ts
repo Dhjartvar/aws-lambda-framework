@@ -12,6 +12,7 @@ import {
   APIGatewayProxyEvent
 } from '../aws-lambda-framework'
 import jwtDecode from 'jwt-decode'
+import { LambdaResult } from './interfaces/LambdaResult'
 
 export abstract class BaseLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -25,7 +26,7 @@ export abstract class BaseLambda implements LambdaFunction {
     )
   }
 
-  abstract async invoke(): Promise<any>
+  abstract async invoke(): Promise<LambdaResult>
 
   async handler(): Promise<APIGatewayProxyResult> {
     try {
@@ -40,7 +41,7 @@ export abstract class BaseLambda implements LambdaFunction {
     }
   }
 
-  private APIGatewayResponse(statusCode: HttpStatusCode, message: string | object) {
+  private APIGatewayResponse(statusCode: HttpStatusCode, result: LambdaResult) {
     let response: APIGatewayProxyResult = {
       statusCode: statusCode,
       headers: {
@@ -48,16 +49,10 @@ export abstract class BaseLambda implements LambdaFunction {
         'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
         'content-type': 'application/json'
       },
-      body: typeof message === 'string' ? message : JSON.stringify(message),
+      body: JSON.stringify(result),
       isBase64Encoded: false
     }
 
     return response
-  }
-
-  useSlack(webhook: string) {
-    process.env.SLACK_WEBHOOK = webhook
-
-    return this
   }
 }
