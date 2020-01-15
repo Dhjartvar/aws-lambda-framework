@@ -9,7 +9,7 @@ export { SlackNotifier } from './framework/services/SlackNotifier'
 export { Context, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 export { CognitoToken } from './framework/interfaces/CognitoToken'
 export { Query } from './framework/interfaces/Query'
-export { Result } from './framework/types/Result'
+export { LambdaResult } from './framework/interfaces/LambdaResult'
 import AWS from 'aws-sdk'
 export const S3 = AWS.S3
 export const Lambda = AWS.Lambda
