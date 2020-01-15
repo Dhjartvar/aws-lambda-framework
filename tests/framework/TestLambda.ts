@@ -1,11 +1,12 @@
 import {
   BaseLambda,
   LambdaContainer,
-  Mysql,
-  LambdaError,
   APIGatewayProxyEvent,
   Context,
-  APIGatewayProxyResult
+  APIGatewayProxyResult,
+  LambdaResult,
+  Mysql,
+  LambdaError
 } from '../../src/aws-lambda-framework'
 
 interface Country {
@@ -20,13 +21,23 @@ class TestLambda extends BaseLambda {
     super(event, context)
   }
 
-  async invoke(): Promise<any> {
-    const res = await LambdaContainer.get(Mysql).execute<Country>({ sql: 'select * from countries' })
-    if (!res.success) throw new LambdaError(res.error.message, res.error.stack)
-    return res.result.rows
+  async invoke(): Promise<LambdaResult> {
+    try {
+      const res = await LambdaContainer.get(Mysql).execute<Country>({
+        sql: process.env.MYSQL_TEST_QUERY!,
+        inputs: [1]
+      })
+
+      return {
+        userMessage: 'Successfully tested Lambda!',
+        data: res.rows
+      }
+    } catch (err) {
+      throw new LambdaError(err.message, err.stack, 'Failed to Test Lambda!')
+    }
   }
 }
 
 export function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
-  return new TestLambda(event, context).useSlack(process.env.SLACK_WEBHOOK!).handler()
+  return new TestLambda(event, context).handler()
 }

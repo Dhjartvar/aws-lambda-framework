@@ -16,74 +16,57 @@ npm i aws-lambda-framework --save
 
 # Usage
 
-In the code below I've provided a simple show-case of how to use the framework for making a Lambda function with input validation that uses the Mysql service to execute a query. The result returned from the service will be always be wrapped inside the body of an HTTP response, such that the function can easily be used in conjunction with API Gateway. Should an error occur, it will be logged, a notification will be send to a Slack channel (if an incoming webhook for a channel is provided) and the error will be sent back in the body of the HTTP response.
+To utilize the framework your Lambda functions should extend the BaseLambda abstract class. This class provides scaffolding for your Lambda functions, ensuring that any results or errors are properly formatted for APIGateway and sent back to the caller. Errors are automatically logged and optionally send to a Slack channel of your choice. New Lambda functions must implement an `invoke` function, which ensures that the previously mentions points occur. This function also returns a LambdaResult to standardize the results for the end user, containing a userMessage and optionally a data object.
+
+## Basic example
 
 ```typescript
-// file TestLambda.ts
+// class TestLambda.ts
 
-import { TestInput } from './constants/TestInput'
 import {
   BaseLambda,
   LambdaContainer,
-  InputValidator,
-  Mysql,
-  Property,
-  LambdaError,
   APIGatewayProxyEvent,
   Context,
   APIGatewayProxyResult,
-  ValidationError
+  LambdaResult,
+  Mysql,
+  LambdaError
 } from '../../src/aws-lambda-framework'
 
 class TestLambda extends BaseLambda {
-  input: TestInput
-
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
-    const request = LambdaContainer.get<TestInput>(Property.EVENT_BODY)
-    this.input = new TestInput(request.testString, request.testNumber)
   }
 
-  async invoke(): Promise<any> {
-    await this.validateInput()
-    const res = await LambdaContainer.get(Mysql).execute('bad sql')
-    if (!res.success) throw new LambdaError()
-    return res.result
-  }
-
-  private async validateInput() {
-    return LambdaContainer.get(InputValidator)
-      .validateOrReject(this.input)
-      .catch(errors => {
-        throw new ValidationError(errors)
+  async invoke(): Promise<LambdaResult> {
+    try {
+      const res = await LambdaContainer.get(Mysql).execute<Country>({
+        sql: process.env.MYSQL_TEST_SQL!
       })
+
+      return {
+        userMessage: 'Successfully tested Lambda!',
+        data: res.rows
+      }
+    } catch (err) {
+      throw new LambdaError(err.message, err.stack, 'Failed to Test Lambda!')
+    }
   }
 }
 
 export function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
-  return new TestLambda(event, context).useSlack(process.env.SLACK_WEBHOOK!).handler()
+  return new TestLambda(event, context).handler()
 }
 
-// file TestInput.ts
-import { Length, Min, Max, IsInt } from 'class-validator'
-
-export class TestInput {
-  @Length(10, 20)
-  testString: string
-
-  @IsInt()
-  @Min(0)
-  @Max(10)
-  testNumber: number
-
-  constructor(testString: string, testNumber: number) {
-    this.testString = testString
-    this.testNumber = testNumber
-  }
+// interface Country.ts
+interface Country {
+  id: number
+  name: string
+  locale: string
+  countryCode: number
 }
 ```
-
-Note that most standard configuration (such as the slack webhook or database credentials) can simply be provided as environment variables instead of setting it on the service itself. This will be covered in the next section
 
 # Services
 

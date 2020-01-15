@@ -14,8 +14,7 @@ export default class ErrorLambda extends BaseLambda {
   }
 
   async invoke(): Promise<any> {
-    const res = await LambdaContainer.get(Mysql).execute({ sql: 'bad sql' })
-    if (!res.success) throw new LambdaError(res.error.message, res.error.stack)
+    await LambdaContainer.get(Mysql).execute({ sql: 'bad sql' })
   }
 }
 
