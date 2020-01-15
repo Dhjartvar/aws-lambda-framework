@@ -1,5 +1,16 @@
 # Changelog for aws-lambda-framework
 
+## [0.3.0] - 2020-01-15
+
+## Added
+
+- `LambdaResult` to standardize content sent back in the body of the HTTP response
+
+## Changed
+
+- Removed `Result` (Either) pattern because of improved error handling in BaseLambda and to have similar behaviour among services
+- Unhandled errors will now be converted to LambdaErrors.
+
 ## [0.2.5] - 2020-01-14
 
 ## Added
