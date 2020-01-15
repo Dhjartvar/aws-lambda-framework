@@ -13,6 +13,7 @@ import {
 } from '../aws-lambda-framework'
 import jwtDecode from 'jwt-decode'
 import { LambdaResult } from './interfaces/LambdaResult'
+import { LambdaError } from './errors/LambdaError'
 
 export abstract class BaseLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -32,6 +33,7 @@ export abstract class BaseLambda implements LambdaFunction {
     try {
       return this.APIGatewayResponse(HttpStatusCode.Ok, await this.invoke())
     } catch (err) {
+      if (!err.isLambdaError) err = new LambdaError(err.message, err.stack, undefined, err.statusCode)
       if (process.env.NODE_ENV !== Environment.Test) console.error(err)
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
       return this.APIGatewayResponse(err.statusCode ?? HttpStatusCode.InternalServerError, err)

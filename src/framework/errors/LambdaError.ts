@@ -7,6 +7,7 @@ export class LambdaError extends Error {
   errorMessage: string
   stackTrace?: string = this.stack
   userMessage: string
+  isLambdaError: boolean = true
   constructor(
     errorMessage: string = `Lambda function ${LambdaContainer.get<Context>(Property.CONTEXT).functionName} failed.`,
     stackTrace?: string,
