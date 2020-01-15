@@ -8,6 +8,10 @@ For release notes, see the [CHANGELOG](https://github.com/Dhjartvar/aws-lambda-f
 
 This project is still in the early stages, any feedback is much appreciated. Please let me know of any services or features you feel could improve this framework!
 
+# Motivation
+
+When developing microservice architectures on aws, a lot of common functionality has to be implemented into each Lambda function. This framework has been developed to provide that scaffolding as well streamline error handling and responses, such that anyone using Lambda functions through an API can always expect the same output.
+
 # Installation
 
 ```
