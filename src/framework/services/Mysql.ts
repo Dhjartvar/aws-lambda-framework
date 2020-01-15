@@ -3,12 +3,12 @@ import mysql, {
   Pool as MysqlPool,
   ConnectionOptions as MysqlConfig,
   PoolOptions as MysqlPoolConfig,
-  PoolConnection as MysqlPoolConnection
+  PoolConnection as MysqlPoolConnection,
+  RowDataPacket
 } from 'mysql2/promise'
 import { injectable } from 'inversify'
 import Connection from '../interfaces/Connection'
 import { LambdaContainer, Environment, Property } from '../../aws-lambda-framework'
-import { Result } from '../types/Result'
 import { Query } from '../interfaces/Query'
 import 'reflect-metadata'
 import { QueryResult } from '../interfaces/QueryResult'
@@ -16,8 +16,9 @@ import { TransactionResult, TRANSACTION_SUCCESS_MESSAGE } from '../interfaces/Tr
 
 @injectable()
 export class Mysql implements Connection {
-  connection?: MysqlConnection
-  pool?: MysqlPool
+  private connection?: MysqlConnection
+  private pool?: MysqlPool
+  private logging = LambdaContainer.get<boolean>(Property.LOGGING)
   pooling: boolean = true
   config: MysqlConfig = {
     host: process.env.MYSQL_HOST,
@@ -32,60 +33,45 @@ export class Mysql implements Connection {
     }
   }
 
-  async execute<T>(query: Query): Promise<Result<QueryResult<T>, Error>> {
-    if (LambdaContainer.get<boolean>(Property.LOGGING))
-      console.log(`SQL: ${query.sql}\n${query.inputs ? `Inputs: [${query.inputs}]` : ''}`)
+  async execute<T>(query: Query): Promise<QueryResult<T>> {
+    if (this.logging) console.log(`SQL: ${query.sql}\n${query.inputs ? `Inputs: [${query.inputs}]` : ''}`)
 
     if (this.pooling) return this.poolExecute(query)
     else return this.connectionExecute(query)
   }
 
-  private async poolExecute<T>(query: Query): Promise<Result<QueryResult<T>, Error>> {
+  private async poolExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
       if (!this.pool) this.pool = mysql.createPool(this.poolConfig)
 
       let [rows] = await this.pool.execute(query.sql, query.inputs)
 
-      return {
-        success: true,
-        result: {
-          rows: rows as Array<T>
-        }
-      }
+      if (Array.isArray(rows)) return { rows: rows as Array<T> }
+      else return { rows: [], metadata: rows }
     } catch (err) {
-      return {
-        success: false,
-        error: err
-      }
+      throw Error(err)
     }
   }
 
-  private async connectionExecute<T>(query: Query): Promise<Result<QueryResult<T>, Error>> {
+  private async connectionExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
       if (!this.connection) this.connection = await mysql.createConnection(this.config)
 
       const [rows] = await this.connection.execute(query.sql, query.inputs)
 
-      return {
-        success: true,
-        result: {
-          rows: rows as Array<T>
-        }
-      }
+      if (Array.isArray(rows)) return { rows: rows as Array<T> }
+      else return { rows: [], metadata: rows }
     } catch (err) {
-      return {
-        success: false,
-        error: err
-      }
+      throw Error(err)
     }
   }
 
-  async executeTransaction(queries: Query[]): Promise<Result<TransactionResult, Error>> {
+  async executeTransaction(queries: Query[]): Promise<TransactionResult> {
     if (this.pooling) return this.poolExecuteTransaction(queries)
     else return this.connectionExecuteTransaction(queries)
   }
 
-  private async poolExecuteTransaction(queries: Query[]): Promise<Result<TransactionResult, Error>> {
+  private async poolExecuteTransaction(queries: Query[]): Promise<TransactionResult> {
     let connection: MysqlPoolConnection | undefined
 
     try {
@@ -101,21 +87,15 @@ export class Mysql implements Connection {
       await connection.commit()
 
       return {
-        success: true,
-        result: {
-          message: TRANSACTION_SUCCESS_MESSAGE
-        }
+        message: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
       if (connection) await connection.rollback()
-      return {
-        success: false,
-        error: err
-      }
+      throw Error(err)
     }
   }
 
-  private async connectionExecuteTransaction(queries: Query[]): Promise<Result<TransactionResult, Error>> {
+  private async connectionExecuteTransaction(queries: Query[]): Promise<TransactionResult> {
     try {
       if (!this.connection) this.connection = await mysql.createConnection(this.config)
 
@@ -128,17 +108,11 @@ export class Mysql implements Connection {
       await this.connection.commit()
 
       return {
-        success: true,
-        result: {
-          message: TRANSACTION_SUCCESS_MESSAGE
-        }
+        message: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
       if (this.connection) await this.connection.rollback()
-      return {
-        success: false,
-        error: err
-      }
+      throw Error(err)
     }
   }
 

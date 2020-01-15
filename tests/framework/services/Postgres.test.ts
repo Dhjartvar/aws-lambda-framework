@@ -19,8 +19,7 @@ describe('Postgres', () => {
       inputs: [1]
     }
     const res = await postgres.execute(query)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.rows.length).toBeGreaterThan(0)
+    expect(res.rows.length).toBeGreaterThan(0)
   })
 
   it('should query Postgres using a pool and retrieve more than zero rows', async () => {
@@ -29,8 +28,7 @@ describe('Postgres', () => {
       inputs: [1]
     }
     const res = await postgres.execute(query)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.rows.length).toBeGreaterThan(0)
+    expect(res.rows.length).toBeGreaterThan(0)
   })
 
   it('should query Postgres using a pool and execute two queries simultanously', async () => {
@@ -45,23 +43,17 @@ describe('Postgres', () => {
       }
     ]
     const res = await Promise.all([postgres.execute(queries[0]), postgres.execute(queries[1])])
-    expect(res[0].success).toBeTruthy()
-    expect(res[1].success).toBeTruthy()
-    if (res[0].success) expect(res[0].result.rows.length).toBeGreaterThan(0)
-    if (res[1].success) expect(res[1].result.rows.length).toBeGreaterThan(0)
+    expect(res[0].rows.length).toBeGreaterThan(0)
+    expect(res[1].rows.length).toBeGreaterThan(0)
   })
 
   it('should throw query error because of bad sql', async () => {
     postgres.pooling = false
-    const res = await postgres.execute({ sql: 'bad sql' })
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(postgres.execute({ sql: 'bad sql' })).rejects.toBeDefined()
   })
 
   it('should throw query error because of bad sql using a pool', async () => {
-    const res = await postgres.execute({ sql: 'bad sql' })
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(postgres.execute({ sql: 'bad sql' })).rejects.toBeDefined()
   })
 
   it('should run a transaction of queries using a pool and return a successful Result with a success message', async () => {
@@ -76,8 +68,7 @@ describe('Postgres', () => {
       }
     ]
     const res = await postgres.executeTransaction(queries)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+    expect(res.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
   })
 
   it('should run a transaction of queries using a pool and return an unsuccessful Result because of bad sql', async () => {
@@ -91,9 +82,7 @@ describe('Postgres', () => {
         sql: 'bad sql'
       }
     ]
-    const res = await postgres.executeTransaction(queries)
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(postgres.executeTransaction(queries)).rejects.toBeDefined()
   })
 
   it('should run a transaction of queries and return a successful Result with a success message', async () => {
@@ -109,8 +98,7 @@ describe('Postgres', () => {
       }
     ]
     const res = await postgres.executeTransaction(queries)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+    expect(res.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
   })
 
   it('should run a transaction of queries and return an unsuccessful Result because of bad sql', async () => {
@@ -124,9 +112,7 @@ describe('Postgres', () => {
         sql: 'bad sql'
       }
     ]
-    const res = await postgres.executeTransaction(queries)
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(postgres.executeTransaction(queries)).rejects.toBeDefined()
   })
 
   afterAll(async () => {

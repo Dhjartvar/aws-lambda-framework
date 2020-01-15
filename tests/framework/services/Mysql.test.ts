@@ -19,8 +19,7 @@ describe('Mysql', () => {
       inputs: [1]
     }
     const res = await mysql.execute(query)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.rows.length).toBeGreaterThan(0)
+    expect(res.rows.length).toBeGreaterThan(0)
   })
 
   it('should execute a query using a pool and return a successful Result containg rows of more than zero when using a pool', async () => {
@@ -29,21 +28,16 @@ describe('Mysql', () => {
       inputs: [1]
     }
     const res = await mysql.execute(query)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.rows.length).toBeGreaterThan(0)
+    expect(res.rows.length).toBeGreaterThan(0)
   })
 
   it('should return an unsuccessful Result containing an error because of bad sql', async () => {
     mysql.pooling = false
-    const res = await mysql.execute({ sql: 'bad sql' })
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(mysql.execute({ sql: 'bad sql' })).rejects.toBeDefined()
   })
 
   it('should return an unsuccessful Result containing an error because of bad sql when using a pool', async () => {
-    const res = await mysql.execute({ sql: 'bad sql' })
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(mysql.execute({ sql: 'bad sql' })).rejects.toBeDefined()
   })
 
   it('should run a transaction of queries using a pool and return a successful Result with a success message', async () => {
@@ -56,8 +50,7 @@ describe('Mysql', () => {
       }
     ]
     const res = await mysql.executeTransaction(queries)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+    expect(res.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
   })
 
   it('should run a transaction of queries using a pool and return an unsuccessful Result because of bad sql', async () => {
@@ -69,9 +62,7 @@ describe('Mysql', () => {
         sql: 'bad sql'
       }
     ]
-    const res = await mysql.executeTransaction(queries)
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(mysql.executeTransaction(queries)).rejects.toBeDefined()
   })
 
   it('should run a transaction of queries and return a successful Result with a success message', async () => {
@@ -85,8 +76,7 @@ describe('Mysql', () => {
       }
     ]
     const res = await mysql.executeTransaction(queries)
-    expect(res.success).toBeTruthy()
-    if (res.success) expect(res.result.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
+    expect(res.message).toEqual(TRANSACTION_SUCCESS_MESSAGE)
   })
 
   it('should run a transaction of queries and return an unsuccessful Result because of bad sql', async () => {
@@ -99,9 +89,7 @@ describe('Mysql', () => {
         sql: 'bad sql'
       }
     ]
-    const res = await mysql.executeTransaction(queries)
-    expect(res.success).toBeFalsy()
-    if (res.success === false) expect(res.error).toBeDefined()
+    await expect(mysql.executeTransaction(queries)).rejects.toBeDefined()
   })
 
   afterAll(async () => {
