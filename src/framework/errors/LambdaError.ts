@@ -1,13 +1,13 @@
 import { LambdaContainer, APIGatewayProxyEvent, Property, Context, HttpStatusCode } from '../../aws-lambda-framework'
 
 export class LambdaError extends Error {
-  statusCode: number
-  context: Context = LambdaContainer.get<Context>(Property.CONTEXT)
-  event: APIGatewayProxyEvent = LambdaContainer.get<APIGatewayProxyEvent>(Property.EVENT)
+  readonly context: Context = LambdaContainer.get<Context>(Property.CONTEXT)
+  readonly event: APIGatewayProxyEvent = LambdaContainer.get<APIGatewayProxyEvent>(Property.EVENT)
+  readonly isLambdaError: boolean = true
   errorMessage: string
   stackTrace?: string = this.stack
   userMessage: string
-  isLambdaError: boolean = true
+  statusCode: number
   constructor(
     errorMessage: string = `Lambda function ${LambdaContainer.get<Context>(Property.CONTEXT).functionName} failed.`,
     stackTrace?: string,
