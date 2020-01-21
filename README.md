@@ -1,8 +1,9 @@
 # AWS Lambda Framework
 
-![NPM version](https://img.shields.io/npm/v/aws-lambda-framework)
-![license]https://img.shields.io/github/license/Dhjartvar/aws-lambda-framework
+https://img.shields.io/npm/v/aws-lambda-framework
+https://img.shields.io/github/license/Dhjartvar/aws-lambda-framework
 https://img.shields.io/david/Dhjartvar/aws-lambda-framework
+
 
 A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, connecting to databases, and using AWS services.
 
