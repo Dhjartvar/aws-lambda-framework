@@ -78,7 +78,7 @@ interface Country {
 
 The framework provides easy access to some of the tools that are often needed when writing Lambda functions. These are injected as singletons into the Container the first time they are called.
 
-## InputValidator
+## Validator
 
 ## Mysql
 

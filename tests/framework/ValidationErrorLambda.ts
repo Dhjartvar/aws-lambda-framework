@@ -5,7 +5,7 @@ import {
   BaseLambda,
   LambdaError,
   LambdaContainer,
-  InputValidator,
+  Validator,
   ValidationError
 } from '../../src/aws-lambda-framework'
 import { TestInput } from './constants/TestInput'
@@ -24,7 +24,7 @@ export default class ValidationErrorLambda extends BaseLambda {
   }
 
   private async validateInput() {
-    return LambdaContainer.get(InputValidator)
+    return LambdaContainer.get(Validator)
       .validateOrReject(this.input)
       .catch(errors => {
         throw new ValidationError(errors)

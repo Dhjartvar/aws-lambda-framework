@@ -1,5 +1,5 @@
 export const Service = {
-  INPUT_VALIDATOR: Symbol.for('InputValidator'),
+  INPUT_VALIDATOR: Symbol.for('Validator'),
   SLACK_NOTIFIER: Symbol.for('SlackNotifier'),
   POSTGRES: Symbol.for('Postgres'),
   MYSQL: Symbol.for('Mysql'),
