@@ -7,6 +7,10 @@ branches:
   only:
     - master
 
+services:
+  - postgresql
+  - mysql
+
 install:
   - npm ci
   - npm install codecov -g
