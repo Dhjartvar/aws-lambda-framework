@@ -1,4 +1,4 @@
-import { LambdaContainer, Validator } from '../../../src/aws-lambda-framework'
+import { LambdaContainer, Validator } from '../../aws-lambda-framework'
 import { TestInput } from '../constants/TestInput'
 
 describe('Validator', () => {
