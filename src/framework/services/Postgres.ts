@@ -20,7 +20,7 @@ export class Postgres implements Connection {
   private logging = LambdaContainer.get<boolean>(Property.LOGGING)
   pooling: boolean = true
   config: PostgresConfig = {
-    connectionString: process.env.Postgres_CONNECTION_STRING,
+    connectionString: process.env.POSTGRES_CONNECTION_STRING,
     database: process.env.POSTGRES_DB,
     host: process.env.POSTGRES_HOST,
     password: process.env.POSTGRES_PASS,
