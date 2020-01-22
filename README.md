@@ -1,8 +1,8 @@
 # AWS Lambda Framework
 
+![npm](https://img.shields.io/npm/v/aws-lambda-framework)
 ![build](https://img.shields.io/travis/Dhjartvar/aws-lambda-framework)
 ![coverage](https://img.shields.io/codecov/c/github/Dhjartvar/aws-lambda-framework)
-![npm](https://img.shields.io/npm/v/aws-lambda-framework)
 ![dependencies](https://img.shields.io/david/Dhjartvar/aws-lambda-framework)
 ![license](https://img.shields.io/github/license/Dhjartvar/aws-lambda-framework)
 
