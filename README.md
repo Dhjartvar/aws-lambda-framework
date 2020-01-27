@@ -76,6 +76,123 @@ interface Country {
 }
 ```
 
+## Kitchensink Example
+
+```typescript
+// KitchensinkLambda.ts
+
+import {
+  BaseLambda,
+  APIGatewayProxyEvent,
+  Context,
+  LambdaResult,
+  LambdaContainer,
+  Property
+} from '../../src/aws-lambda-framework'
+import { inject } from 'inversify'
+import { KitchensinkRepository } from './KitchensinkRepository'
+import { UpdateKitchensinkRequest } from './UpdateKitchensinkRequest'
+import { validatePermissions } from './validatePermissions'
+import { validateRequest } from './validateRequest'
+
+class KitchensinkLambda extends BaseLambda {
+  @inject(KitchensinkRepository) private repo: KitchensinkRepository
+  request: UpdateKitchensinkRequest
+
+  constructor(event: APIGatewayProxyEvent, context: Context) {
+    super(event, context)
+    this.request = LambdaContainer.get<UpdateKitchensinkRequest>(Property.EVENT_BODY)
+  }
+
+  async invoke(): Promise<LambdaResult> {
+    validatePermissions(['Superusers'])
+    await validateRequest(this.request)
+
+    const res = await this.repo.updateKitchenSink(this.request.updatedKitchensink)
+
+    return {
+      userMessage: 'Successfully updated Kitchensink!',
+      data: res.metadata
+    }
+  }
+}
+
+export function handler(event: APIGatewayProxyEvent, context: Context) {
+  return new KitchensinkLambda(event, context)
+}
+
+// Kitchensink.ts
+
+import { IsInt, Min, Max } from 'class-validator'
+
+export class Kitchensink {
+  id: number
+  @IsInt()
+  @Min(40)
+  @Max(200)
+  height: number
+  @IsInt()
+  @Min(80)
+  @Max(400)
+  width: number
+}
+
+// KitchensinkRepository.ts
+
+import { injectable, inject } from 'inversify'
+import { Mysql, Query } from '../../src/aws-lambda-framework'
+import { QueryResult } from '../../src/framework/interfaces/QueryResult'
+import { Kitchensink } from './Kitchensink'
+
+@injectable()
+export class KitchensinkRepository {
+  @inject(Mysql) private mysql: Mysql
+
+  async updateKitchenSink(kitchensink: Kitchensink): Promise<QueryResult<void>> {
+    const query: Query = {
+      sql: `
+        UPDATE
+          some_table (id, height, width)
+        VALUES (
+          ?,?,?
+        )`,
+      inputs: [kitchensink.id, kitchensink.height, kitchensink.width]
+    }
+
+    return this.mysql.execute(query)
+  }
+}
+
+// UpdateKitchensinkRequest.ts
+
+import { Kitchensink } from './Kitchensink'
+
+export class UpdateKitchensinkRequest {
+  updatedKitchensink: Kitchensink
+}
+
+// validatePermissions.ts
+
+import { Property, LambdaContainer, CognitoToken, UnauthorizedError } from '../../src/aws-lambda-framework'
+
+export function validatePermissions(whitelistedCognitoGroups: string[]): void {
+  const cognitoGroups = LambdaContainer.get<CognitoToken>(Property.COGNITO_TOKEN)['cognito:groups']
+  if (cognitoGroups.some(g => whitelistedCognitoGroups.includes(g))) throw new UnauthorizedError()
+}
+
+// validateRequest.ts
+
+import { Validator, LambdaContainer, ValidationError } from '../../src/aws-lambda-framework'
+
+export function validateRequest(request: object): Promise<void> {
+  return LambdaContainer.get(Validator)
+    .validateOrReject(request)
+    .catch(errors => {
+      throw new ValidationError(errors)
+    })
+}
+```
+
 # Services
 
 The framework provides easy access to some of the tools that are often needed when writing Lambda functions. These are injected as singletons into the Container the first time they are called.
@@ -102,46 +219,3 @@ The framework provides easy access to some of the tools that are often needed wh
 - S3
 - SES
 - SSM
-
-# Environment variables
-
-The framework uses environment variables for the most basic configuration of services. Note that the environment variable is also used in some of these services, e.g. to disable sending Slack notifications unless the environment is set to production and closing connection pools in test environments.
-
-Environment
-
-- NODE_ENV
-
-Slack
-
-- SLACK_WEBHOOK
-
-AWS
-
-- REGION
-
-Mysql
-
-- MYSQL_HOST
-- MYSQL_DB
-- MYSQL_USER
-- MYSQL_PASS
-- MYSQL_CONNECTIONS_LIMIT
-
-Postgres
-
-- POSTGRES_HOST
-- POSTGRES_PORT
-- POSTGRES_DB
-- POSTGRES_USER
-- POSTGRES_PASS
-- POSTGRES_CONNECTIONS_LIMIT
-
-# Roadmap
-
-## More AWS services
-
-## Travis-CI
-
-## CodeCov
-
-## Issue tracking
