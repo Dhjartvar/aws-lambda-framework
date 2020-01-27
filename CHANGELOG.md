@@ -1,25 +1,37 @@
 # Changelog for aws-lambda-framework
 
+## [0.3.0] - 2020-01-27
+
+### Added
+
+- Kitchensink example
+- Travis CI integration
+- CodeCov integration
+
+### Changed
+
+- InputValidator renamed to Validator
+
 ## [0.3.0] - 2020-01-15
 
-## Added
+### Added
 
 - `LambdaResult` to standardize content sent back in the body of the HTTP response
 
-## Changed
+### Changed
 
 - Removed `Result` (Either) pattern because of improved error handling in BaseLambda and to have similar behaviour among services
 - Unhandled errors will now be converted to LambdaErrors.
 
 ## [0.2.5] - 2020-01-14
 
-## Added
+### Added
 
 - CloudFront AWS Service
 
 ## [0.2.4] - 2020-01-14
 
-## Changed
+### Changed
 
 - Reverted `Result` success object back to result.
 - `Connection.execute` now returns a `QueryResult` containing the rows.
