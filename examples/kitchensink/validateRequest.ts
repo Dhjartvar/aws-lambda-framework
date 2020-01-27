@@ -1,4 +1,4 @@
-import { Validator, LambdaContainer, ValidationError } from "../../src/aws-lambda-framework";
+import { Validator, LambdaContainer, ValidationError } from '../../src/aws-lambda-framework'
 
 export function validateRequest(request: object): Promise<void> {
   return LambdaContainer.get(Validator)
