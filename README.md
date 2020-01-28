@@ -6,7 +6,7 @@
 ![dependencies](https://img.shields.io/david/Dhjartvar/aws-lambda-framework)
 ![vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/Dhjartvar/aws-lambda-framework)
 ![license](https://img.shields.io/github/license/Dhjartvar/aws-lambda-framework)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com) [![Join the chat at https://gitter.im/aws-lambda-framework/community](https://badges.gitter.im/aws-lambda-framework/community.svg)](https://gitter.im/aws-lambda-framework/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, connecting to databases, and using AWS services.
 
