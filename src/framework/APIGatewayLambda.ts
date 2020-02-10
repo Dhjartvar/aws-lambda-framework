@@ -12,10 +12,9 @@ import {
   APIGatewayProxyEvent
 } from '../aws-lambda-framework'
 import jwtDecode from 'jwt-decode'
-import { LambdaResult } from './interfaces/LambdaResult'
 import { LambdaError } from './errors/LambdaError'
 
-export abstract class BaseLambda implements LambdaFunction {
+export abstract class APIGatewayLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
     LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
@@ -27,7 +26,7 @@ export abstract class BaseLambda implements LambdaFunction {
     )
   }
 
-  abstract async invoke(): Promise<LambdaResult>
+  abstract async invoke(): Promise<object>
 
   async handler(): Promise<APIGatewayProxyResult> {
     try {
@@ -43,7 +42,7 @@ export abstract class BaseLambda implements LambdaFunction {
     }
   }
 
-  private APIGatewayResponse(statusCode: HttpStatusCode, result: LambdaResult) {
+  private APIGatewayResponse(statusCode: HttpStatusCode, res: object) {
     let response: APIGatewayProxyResult = {
       statusCode: statusCode,
       headers: {
@@ -51,7 +50,7 @@ export abstract class BaseLambda implements LambdaFunction {
         'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
         'content-type': 'application/json'
       },
-      body: JSON.stringify(result),
+      body: JSON.stringify(res),
       isBase64Encoded: false
     }
 
