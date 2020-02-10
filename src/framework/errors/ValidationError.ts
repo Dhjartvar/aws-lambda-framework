@@ -4,10 +4,10 @@ export class ValidationError extends LambdaError {
   validationErrors: any[]
   constructor(
     validationErrors: any[],
-    errorMessage: string = 'Invalid input. Check validationErrors property for more information.',
+    errorMessage = 'Invalid input. Check validationErrors property for more information.',
     stackTrace?: string,
-    userMessage: string = 'Invalid input!',
-    statusCode: number = HttpStatusCode.BadRequest
+    userMessage = 'Invalid input!',
+    statusCode = HttpStatusCode.BadRequest
   ) {
     super(errorMessage, stackTrace, userMessage, statusCode)
     this.validationErrors = validationErrors
