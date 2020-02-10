@@ -2,7 +2,7 @@ import {
   APIGatewayProxyEvent,
   Context,
   APIGatewayProxyResult,
-  BaseLambda,
+  APIGatewayLambda,
   CognitoToken,
   UnauthorizedError
 } from '../../src/aws-lambda-framework'
@@ -22,14 +22,16 @@ let mockToken: CognitoToken = {
   'cognito:groups': ['Users']
 }
 
-export default class UnauthorizedErrorLambda extends BaseLambda {
+export default class UnauthorizedErrorLambda extends APIGatewayLambda {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
   }
 
-  async invoke(): Promise<any> {
+  async invoke(): Promise<object> {
     this.validatePermissions()
-    return 'If this code is reached, user has valid permissions!'
+    return {
+      userMessage: 'If this code is reached, user has valid permissions!'
+    }
   }
 
   private validatePermissions(): void {

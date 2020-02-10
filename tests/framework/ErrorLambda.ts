@@ -2,19 +2,18 @@ import {
   APIGatewayProxyEvent,
   Context,
   APIGatewayProxyResult,
-  BaseLambda,
-  LambdaError,
+  APIGatewayLambda,
   LambdaContainer,
   Mysql
 } from '../../src/aws-lambda-framework'
 
-export default class ErrorLambda extends BaseLambda {
+export default class ErrorLambda extends APIGatewayLambda {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
   }
 
-  async invoke(): Promise<any> {
-    await LambdaContainer.get(Mysql).execute({ sql: 'bad sql' })
+  async invoke(): Promise<object> {
+    return LambdaContainer.get(Mysql).execute({ sql: 'bad sql' })
   }
 }
 

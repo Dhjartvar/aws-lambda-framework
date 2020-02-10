@@ -1,12 +1,12 @@
 import {
-  BaseLambda,
+  APIGatewayLambda,
   LambdaContainer,
   APIGatewayProxyEvent,
   Context,
   APIGatewayProxyResult,
-  LambdaResult,
   Mysql,
-  LambdaError
+  LambdaError,
+  SlackNotifier
 } from '../../src/aws-lambda-framework'
 
 interface Country {
@@ -16,13 +16,14 @@ interface Country {
   countryCode: number
 }
 
-class TestLambda extends BaseLambda {
+class TestLambda extends APIGatewayLambda {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     super(event, context)
   }
 
-  async invoke(): Promise<LambdaResult> {
+  async invoke(): Promise<object> {
     try {
+      await LambdaContainer.get(SlackNotifier).notify('TEST')
       const res = await LambdaContainer.get(Mysql).execute<Country>({
         sql: process.env.MYSQL_TEST_QUERY!,
         inputs: [1]
