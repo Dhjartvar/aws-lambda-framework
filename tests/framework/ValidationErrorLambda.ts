@@ -2,15 +2,15 @@ import {
   APIGatewayProxyEvent,
   Context,
   APIGatewayProxyResult,
-  BaseLambda,
   LambdaError,
   LambdaContainer,
   Validator,
-  ValidationError
+  ValidationError,
+  APIGatewayLambda
 } from '../../src/aws-lambda-framework'
 import { TestInput } from './constants/TestInput'
 
-export default class ValidationErrorLambda extends BaseLambda {
+export default class ValidationErrorLambda extends APIGatewayLambda {
   input: TestInput
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
