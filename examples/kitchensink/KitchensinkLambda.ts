@@ -1,8 +1,7 @@
 import {
-  BaseLambda,
+  APIGatewayLambda,
   APIGatewayProxyEvent,
   Context,
-  LambdaResult,
   LambdaContainer,
   Property
 } from '../../src/aws-lambda-framework'
@@ -12,7 +11,7 @@ import { UpdateKitchensinkRequest } from './UpdateKitchensinkRequest'
 import { validatePermissions } from './validatePermissions'
 import { validateRequest } from './validateRequest'
 
-class KitchensinkLambda extends BaseLambda {
+class KitchensinkLambda extends APIGatewayLambda {
   @inject(KitchensinkRepository) private repo: KitchensinkRepository
   request: UpdateKitchensinkRequest
 
@@ -21,7 +20,7 @@ class KitchensinkLambda extends BaseLambda {
     this.request = LambdaContainer.get<UpdateKitchensinkRequest>(Property.EVENT_BODY)
   }
 
-  async invoke(): Promise<LambdaResult> {
+  async invoke(): Promise<object> {
     validatePermissions(['Superusers'])
     await validateRequest(this.request)
 
