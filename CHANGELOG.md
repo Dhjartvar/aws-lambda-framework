@@ -4,6 +4,25 @@
 
 ### Added
 
+- Specific base classes for 3 types of Lambda functions: APIGateway, CloudWatch and DynamoDBStreams
+- Basic examples for each type
+
+### Changed
+
+- Removed LambdaResult to instead let users define custom responses for each function
+
+### Changed
+
+- InputValidator renamed to Validator
+
+### Fix
+
+- Removed explicit types in error classes where they were already implicit
+
+## [0.3.1] - 2020-01-27
+
+### Added
+
 - Kitchensink example
 - Travis CI integration
 - CodeCov integration
