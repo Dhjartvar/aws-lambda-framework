@@ -1,5 +1,6 @@
 import { APIGatewayProxyResult } from 'aws-lambda'
 
 export default interface LambdaFunction {
-  handler(): Promise<APIGatewayProxyResult>
+  invoke(): Promise<object | void>
+  handler(): Promise<APIGatewayProxyResult | void>
 }
