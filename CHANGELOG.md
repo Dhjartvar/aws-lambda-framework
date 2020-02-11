@@ -1,6 +1,16 @@
 # Changelog for aws-lambda-framework
 
-## [0.3.0] - 2020-01-27
+## [0.4.1] - 2020-02-11
+
+### Changed
+
+- Removed Context from LambdaErrors
+
+### Fix
+
+- Constants are now rebound upon consecutive Lambda invocations.
+
+## [0.4.0] - 2020-02-10
 
 ### Added
 
