@@ -1,5 +1,15 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.2] - 2020-02-11
+
+### Changed
+
+- Removed Context from LambdaErrors
+
+### Fix
+
+- CognitoToken is now only bound if Authorization header exists.
+
 ## [0.4.1] - 2020-02-11
 
 ### Changed
