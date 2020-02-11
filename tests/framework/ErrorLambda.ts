@@ -4,7 +4,8 @@ import {
   APIGatewayProxyResult,
   APIGatewayLambda,
   LambdaContainer,
-  Mysql
+  Mysql,
+  Property
 } from '../../src/aws-lambda-framework'
 
 export default class ErrorLambda extends APIGatewayLambda {
