@@ -13,8 +13,6 @@ describe('TestLambda', () => {
   it('should call the handler and get an APIGatewayResult response back with status code 200', async () => {
     let res = await handler(testEvent, testContext)
 
-    console.log('RES: ', res)
-
     expect(res.statusCode).toBe(HttpStatusCode.Ok)
     expect(res.headers).toEqual(headers)
     expect(res.isBase64Encoded).toBeFalsy()

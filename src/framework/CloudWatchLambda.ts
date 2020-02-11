@@ -26,7 +26,7 @@ export abstract class CloudWatchLambda implements LambdaFunction {
 
   async handler(): Promise<void> {
     try {
-      await this.invoke()
+      return this.invoke()
     } catch (err) {
       if (!err.event) err = new LambdaError(err.message, err.stack, undefined, err.statusCode)
       if (process.env.NODE_ENV !== Environment.Test) console.error(err)
