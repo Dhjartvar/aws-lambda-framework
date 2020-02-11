@@ -13,8 +13,13 @@ import { CloudWatchLogsEvent } from 'aws-lambda'
 
 export abstract class CloudWatchLambda implements LambdaFunction {
   constructor(event: CloudWatchLogsEvent, context: Context) {
-    LambdaContainer.bind<CloudWatchLogsEvent>(Property.EVENT).toConstantValue(event)
-    LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
+    if (LambdaContainer.isBound(Property.EVENT)) {
+      LambdaContainer.rebind<CloudWatchLogsEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
+    } else {
+      LambdaContainer.bind<CloudWatchLogsEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
+    }
   }
 
   abstract async invoke(): Promise<void>

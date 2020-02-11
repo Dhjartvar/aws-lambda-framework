@@ -13,8 +13,13 @@ import { DynamoDBStreamEvent } from 'aws-lambda'
 
 export abstract class DynamoDBStreamsLambda implements LambdaFunction {
   constructor(event: DynamoDBStreamEvent, context: Context) {
-    LambdaContainer.bind<DynamoDBStreamEvent>(Property.EVENT).toConstantValue(event)
-    LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
+    if (LambdaContainer.isBound(Property.EVENT)) {
+      LambdaContainer.rebind<DynamoDBStreamEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
+    } else {
+      LambdaContainer.bind<DynamoDBStreamEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
+    }
   }
 
   abstract async invoke(): Promise<void>
