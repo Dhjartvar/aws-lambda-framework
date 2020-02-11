@@ -1,9 +1,7 @@
 import { LambdaContainer, APIGatewayProxyEvent, Property, Context, HttpStatusCode } from '../../aws-lambda-framework'
 
 export class LambdaError extends Error {
-  readonly context = LambdaContainer.get<Context>(Property.CONTEXT)
   readonly event = LambdaContainer.get<APIGatewayProxyEvent>(Property.EVENT)
-  readonly isLambdaError = true
   errorMessage: string
   stackTrace = this.stack
   userMessage: string
