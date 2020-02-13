@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.3] - 2020-02-13
+
+### Fix
+
+- Event body is now only parsed if possible, otherwise the raw data is used.
+
 ## [0.4.2] - 2020-02-13
 
 ### Fix
