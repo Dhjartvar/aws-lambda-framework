@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.4] - 2020-02-13
+
+### Change
+
+- Erorrs caught in Lambda function are no longer casted to LambdaErrors.
+
 ## [0.4.3] - 2020-02-13
 
 ### Fix
