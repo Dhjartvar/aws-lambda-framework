@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.2] - 2020-02-13
+
+### Fix
+
+- userMessage prop in LambdaError is no longer overwritten.
+
 ## [0.4.1] - 2020-02-11
 
 ### Changed
