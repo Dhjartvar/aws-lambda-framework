@@ -13,6 +13,7 @@ import {
 } from '../aws-lambda-framework'
 import jwtDecode from 'jwt-decode'
 import { LambdaError } from './errors/LambdaError'
+import { tryJSONparse } from './utils/tryJSONparse'
 
 export abstract class APIGatewayLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
@@ -29,9 +30,9 @@ export abstract class APIGatewayLambda implements LambdaFunction {
     } else {
       LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
       LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
-      LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(
-        typeof event.body === 'string' ? JSON.parse(event.body) : event.body
-      )
+      if (event.body) {
+        LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
+      }
       if (event.headers?.Authorization)
         LambdaContainer.bind<Context>(Property.COGNITO_TOKEN).toConstantValue(
           JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
