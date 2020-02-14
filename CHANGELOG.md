@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.6] - 2020-02-14
+
+### Fix
+
+- directory structure is no longer changed in build files
+
 ## [0.4.5] - 2020-02-14
 
 ### Fix
