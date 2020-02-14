@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.5] - 2020-02-14
+
+### Fix
+
+- Event Body is now rebound in the same way it is bound
+
 ## [0.4.4] - 2020-02-13
 
 ### Change
