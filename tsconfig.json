@@ -6,6 +6,7 @@
     "lib": ["es6"],
     "module": "commonjs",
     "declaration": true,
+    "rootDir": "./",
     "outDir": "./dist",
     "strict": true,
     "sourceMap": true,
