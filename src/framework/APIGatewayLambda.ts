@@ -20,9 +20,7 @@ export abstract class APIGatewayLambda implements LambdaFunction {
     if (LambdaContainer.isBound(Property.EVENT)) {
       LambdaContainer.rebind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
       LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
-      LambdaContainer.rebind(Property.EVENT_BODY).toConstantValue(
-        typeof event.body === 'string' ? JSON.parse(event.body) : event.body
-      )
+      if (event.body) LambdaContainer.rebind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
       if (event.headers?.Authorization)
         LambdaContainer.rebind<Context>(Property.COGNITO_TOKEN).toConstantValue(
           JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
@@ -30,9 +28,7 @@ export abstract class APIGatewayLambda implements LambdaFunction {
     } else {
       LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
       LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
-      if (event.body) {
-        LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
-      }
+      if (event.body) LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
       if (event.headers?.Authorization)
         LambdaContainer.bind<Context>(Property.COGNITO_TOKEN).toConstantValue(
           JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
