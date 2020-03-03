@@ -8,7 +8,6 @@ import {
   Environment,
   Context
 } from '../aws-lambda-framework'
-import { LambdaError } from './errors/LambdaError'
 import { DynamoDBStreamEvent } from 'aws-lambda'
 
 export abstract class DynamoDBStreamsLambda implements LambdaFunction {

@@ -12,7 +12,6 @@ import {
   APIGatewayProxyEvent
 } from '../aws-lambda-framework'
 import jwtDecode from 'jwt-decode'
-import { LambdaError } from './errors/LambdaError'
 import { tryJSONparse } from './utils/tryJSONparse'
 
 export abstract class APIGatewayLambda implements LambdaFunction {

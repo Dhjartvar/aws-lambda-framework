@@ -8,7 +8,6 @@ import {
   Environment,
   Context
 } from '../aws-lambda-framework'
-import { LambdaError } from './errors/LambdaError'
 import { CloudWatchLogsEvent } from 'aws-lambda'
 
 export abstract class CloudWatchLambda implements LambdaFunction {
