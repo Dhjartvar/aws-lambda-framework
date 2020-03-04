@@ -1,10 +1,20 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.7] - 2020-03-04
+
+### Added
+
+- SQSLambda for Lambda functions that respond to SQS events
+
+### Fix
+
+- AWS Exports
+
 ## [0.4.6] - 2020-02-14
 
 ### Fix
 
-- directory structure is no longer changed in build files
+- Directory structure is no longer changed in build files
 
 ## [0.4.5] - 2020-02-14
 
