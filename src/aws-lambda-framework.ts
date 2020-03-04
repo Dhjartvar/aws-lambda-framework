@@ -45,6 +45,7 @@ export const CloudFront = cf
 export { APIGatewayLambda } from './framework/APIGatewayLambda'
 export { CloudWatchLambda } from './framework/CloudWatchLambda'
 export { DynamoDBStreamsLambda } from './framework/DynamoDBStreamsLambda'
+export { SQSLambda } from './framework/SQSLambda'
 export { LambdaContainer } from './framework/LambdaContainer'
 export { LambdaError } from './framework/errors/LambdaError'
 export { ValidationError } from './framework/errors/ValidationError'
