@@ -27,31 +27,31 @@
   "author": "dhjartvar",
   "license": "MIT",
   "dependencies": {
+    "@types/aws-lambda": "^8.10.46",
     "class-validator": "^0.11.0",
     "dotenv": "^8.2.0",
     "inversify": "^5.0.1",
     "jwt-decode": "^2.2.0",
     "lambda-slack-notifier": "^1.0.4",
-    "mysql2": "^2.0.2",
-    "pg": "^7.14.0",
-    "reflect-metadata": "^0.1.13",
-    "@types/aws-lambda": "^8.10.31"
+    "mysql2": "^2.1.0",
+    "pg": "^7.18.2",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/dynamodb": "^1.2.0",
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^24.9.1",
     "@types/jwt-decode": "^2.2.1",
     "@types/moment-timezone": "^0.5.12",
     "@types/mysql2": "github:types/mysql2",
-    "@types/pg": "^7.11.2",
-    "aws-sdk": "^2.600.0",
-    "codecov": "^3.6.1",
+    "@types/pg": "^7.14.1",
+    "aws-sdk": "^2.632.0",
+    "codecov": "^3.6.5",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "shx": "^0.3.2",
-    "ts-jest": "^24.2.0",
-    "typedoc": "^0.15.5",
-    "typescript": "^3.7.5"
+    "ts-jest": "^24.3.0",
+    "typedoc": "^0.15.8",
+    "typescript": "^3.8.3"
   },
   "files": [
     "dist/**/*",
