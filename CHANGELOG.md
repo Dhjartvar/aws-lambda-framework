@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.8] - 2020-03-05
+
+### Refactor
+
+- Mysql no longer uses default mysql lib import
+
 ## [0.4.7] - 2020-03-04
 
 ### Added
