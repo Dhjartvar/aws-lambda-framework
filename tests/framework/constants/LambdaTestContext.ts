@@ -6,7 +6,7 @@ export const testContext: Context = {
   functionName: 'test',
   functionVersion: 'test',
   invokedFunctionArn: 'test',
-  memoryLimitInMB: 256,
+  memoryLimitInMB: '256',
   logGroupName: 'test',
   logStreamName: 'test',
   getRemainingTimeInMillis: () => 10000,
