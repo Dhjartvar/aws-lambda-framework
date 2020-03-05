@@ -43,7 +43,7 @@ export class Mysql implements Connection {
 
   private async poolExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
-      if (!this.pool) this.pool = createPool(this.poolConfig)
+      if (!this.pool) this.pool = await createPool(this.poolConfig)
 
       let [rows] = await this.pool.execute(query.sql, query.inputs)
 
