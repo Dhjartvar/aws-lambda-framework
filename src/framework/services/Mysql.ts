@@ -1,10 +1,11 @@
-import mysql, {
+import {
+  createPool,
+  createConnection,
   Connection as MysqlConnection,
   Pool as MysqlPool,
   ConnectionOptions as MysqlConfig,
   PoolOptions as MysqlPoolConfig,
-  PoolConnection as MysqlPoolConnection,
-  RowDataPacket
+  PoolConnection as MysqlPoolConnection
 } from 'mysql2/promise'
 import { injectable } from 'inversify'
 import Connection from '../interfaces/Connection'
@@ -42,7 +43,7 @@ export class Mysql implements Connection {
 
   private async poolExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
-      if (!this.pool) this.pool = mysql.createPool(this.poolConfig)
+      if (!this.pool) this.pool = createPool(this.poolConfig)
 
       let [rows] = await this.pool.execute(query.sql, query.inputs)
 
@@ -55,7 +56,7 @@ export class Mysql implements Connection {
 
   private async connectionExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
-      if (!this.connection) this.connection = await mysql.createConnection(this.config)
+      if (!this.connection) this.connection = await createConnection(this.config)
 
       const [rows] = await this.connection.execute(query.sql, query.inputs)
 
@@ -75,7 +76,7 @@ export class Mysql implements Connection {
     let connection: MysqlPoolConnection | undefined
 
     try {
-      if (!this.pool) this.pool = mysql.createPool(this.poolConfig)
+      if (!this.pool) this.pool = createPool(this.poolConfig)
       connection = await this.pool.getConnection()
 
       await connection.beginTransaction()
@@ -97,7 +98,7 @@ export class Mysql implements Connection {
 
   private async connectionExecuteTransaction(queries: Query[]): Promise<TransactionResult> {
     try {
-      if (!this.connection) this.connection = await mysql.createConnection(this.config)
+      if (!this.connection) this.connection = await createConnection(this.config)
 
       await this.connection.beginTransaction()
 
