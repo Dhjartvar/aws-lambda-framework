@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.10] - 2020-03-05
+
+### Fix
+
+- Event is now json parsed if possible to support sls framework
+
 ## [0.4.9] - 2020-03-05
 
 ### Fix
