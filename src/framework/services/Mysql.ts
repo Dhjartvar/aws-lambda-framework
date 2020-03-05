@@ -76,7 +76,7 @@ export class Mysql implements Connection {
     let connection: MysqlPoolConnection | undefined
 
     try {
-      if (!this.pool) this.pool = createPool(this.poolConfig)
+      if (!this.pool) this.pool = await createPool(this.poolConfig)
       connection = await this.pool.getConnection()
 
       await connection.beginTransaction()
