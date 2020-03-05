@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.11] - 2020-03-05
+
+### Changed
+
+- Now using new private field syntax in Mysql and Postgres services
+
 ## [0.4.10] - 2020-03-05
 
 ### Fix
