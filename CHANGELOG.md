@@ -1,5 +1,13 @@
 # Changelog for aws-lambda-framework
 
+Fix:
+
+## [0.4.12] - 2020-03-05
+
+### Fix
+
+- Now awaits invoke() rather than return in Lambda base classes
+
 ## [0.4.11] - 2020-03-05
 
 ### Changed
