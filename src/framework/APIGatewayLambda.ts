@@ -17,7 +17,7 @@ import { tryJSONparse } from './utils/tryJSONparse'
 export abstract class APIGatewayLambda implements LambdaFunction {
   constructor(event: APIGatewayProxyEvent, context: Context) {
     if (LambdaContainer.isBound(Property.EVENT)) {
-      LambdaContainer.rebind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.rebind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
       if (event.body) LambdaContainer.rebind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
       if (event.headers?.Authorization)
@@ -25,7 +25,7 @@ export abstract class APIGatewayLambda implements LambdaFunction {
           JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
         )
     } else {
-      LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
       if (event.body) LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
       if (event.headers?.Authorization)

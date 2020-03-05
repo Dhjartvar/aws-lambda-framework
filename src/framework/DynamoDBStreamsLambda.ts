@@ -9,14 +9,15 @@ import {
   Context
 } from '../aws-lambda-framework'
 import { DynamoDBStreamEvent } from 'aws-lambda'
+import { tryJSONparse } from './utils/tryJSONparse'
 
 export abstract class DynamoDBStreamsLambda implements LambdaFunction {
   constructor(event: DynamoDBStreamEvent, context: Context) {
     if (LambdaContainer.isBound(Property.EVENT)) {
-      LambdaContainer.rebind<DynamoDBStreamEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.rebind<DynamoDBStreamEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
     } else {
-      LambdaContainer.bind<DynamoDBStreamEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.bind<DynamoDBStreamEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
     }
   }

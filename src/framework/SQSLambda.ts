@@ -9,14 +9,15 @@ import {
   Context,
   SQSEvent
 } from '../aws-lambda-framework'
+import { tryJSONparse } from './utils/tryJSONparse'
 
 export abstract class SQSLambda implements LambdaFunction {
   constructor(event: SQSEvent, context: Context) {
     if (LambdaContainer.isBound(Property.EVENT)) {
-      LambdaContainer.rebind<SQSEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.rebind<SQSEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
     } else {
-      LambdaContainer.bind<SQSEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.bind<SQSEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
     }
   }

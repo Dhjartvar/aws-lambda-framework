@@ -9,14 +9,15 @@ import {
   Context
 } from '../aws-lambda-framework'
 import { CloudWatchLogsEvent } from 'aws-lambda'
+import { tryJSONparse } from './utils/tryJSONparse'
 
 export abstract class CloudWatchLambda implements LambdaFunction {
   constructor(event: CloudWatchLogsEvent, context: Context) {
     if (LambdaContainer.isBound(Property.EVENT)) {
-      LambdaContainer.rebind<CloudWatchLogsEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.rebind<CloudWatchLogsEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
     } else {
-      LambdaContainer.bind<CloudWatchLogsEvent>(Property.EVENT).toConstantValue(event)
+      LambdaContainer.bind<CloudWatchLogsEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
     }
   }
