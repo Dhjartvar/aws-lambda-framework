@@ -15,9 +15,9 @@ import { TransactionResult, TRANSACTION_SUCCESS_MESSAGE } from '../interfaces/Tr
 
 @injectable()
 export class Postgres implements Connection {
-  private connection?: PostgresConnection
-  private pool?: PostgresPool
-  private logging = LambdaContainer.get<boolean>(Property.LOGGING)
+  #connection?: PostgresConnection
+  #pool?: PostgresPool
+  logging = LambdaContainer.get<boolean>(Property.LOGGING)
   pooling: boolean = true
   config: PostgresConfig = {
     connectionString: process.env.POSTGRES_CONNECTION_STRING,
@@ -52,9 +52,9 @@ export class Postgres implements Connection {
 
   private async poolExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
-      if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
+      if (!this.#pool) this.#pool = new PostgresPool(this.poolConfig)
 
-      const res = await this.pool.query(query.sql, query.inputs)
+      const res = await this.#pool.query(query.sql, query.inputs)
 
       return {
         rows: res.rows as Array<T>,
@@ -72,12 +72,12 @@ export class Postgres implements Connection {
 
   private async connectionExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
-      if (!this.connection) {
-        this.connection = new PostgresConnection(this.config)
-        await this.connection.connect()
+      if (!this.#connection) {
+        this.#connection = new PostgresConnection(this.config)
+        await this.#connection.connect()
       }
 
-      const res = await this.connection.query(query.sql, query.inputs)
+      const res = await this.#connection.query(query.sql, query.inputs)
 
       return {
         rows: res.rows as Array<T>,
@@ -102,9 +102,9 @@ export class Postgres implements Connection {
     let connection: PostgresPoolClient | undefined
 
     try {
-      if (!this.pool) this.pool = new PostgresPool(this.poolConfig)
+      if (!this.#pool) this.#pool = new PostgresPool(this.poolConfig)
 
-      connection = await this.pool.connect()
+      connection = await this.#pool.connect()
 
       await connection.query('BEGIN')
 
@@ -128,31 +128,31 @@ export class Postgres implements Connection {
 
   private async connectionExecuteTransaction(queries: Query[]): Promise<TransactionResult> {
     try {
-      if (!this.connection) {
-        this.connection = new PostgresConnection(this.config)
-        await this.connection.connect()
+      if (!this.#connection) {
+        this.#connection = new PostgresConnection(this.config)
+        await this.#connection.connect()
       }
 
-      await this.connection.query('BEGIN')
+      await this.#connection.query('BEGIN')
 
       for (let query of queries) {
         query.sql = this.replaceQuestionMarks(query.sql)
-        await this.connection.query(query.sql, query.inputs)
+        await this.#connection.query(query.sql, query.inputs)
       }
 
-      await this.connection.query('COMMIT')
+      await this.#connection.query('COMMIT')
 
       return {
         message: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
-      if (this.connection) await this.connection.query('ROLLBACK')
+      if (this.#connection) await this.#connection.query('ROLLBACK')
       throw Error(err)
     }
   }
 
   async end(): Promise<void> {
-    if (this.connection) await this.connection.end()
-    if (process.env.NODE_ENV === Environment.Test && this.pool) await this.pool.end()
+    if (this.#connection) await this.#connection.end()
+    if (process.env.NODE_ENV === Environment.Test && this.#pool) await this.#pool.end()
   }
 }

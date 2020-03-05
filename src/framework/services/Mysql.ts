@@ -17,9 +17,9 @@ import { TransactionResult, TRANSACTION_SUCCESS_MESSAGE } from '../interfaces/Tr
 
 @injectable()
 export class Mysql implements Connection {
-  private connection?: MysqlConnection
-  private pool?: MysqlPool
-  private logging = LambdaContainer.get<boolean>(Property.LOGGING)
+  #connection?: MysqlConnection
+  #pool?: MysqlPool
+  logging = LambdaContainer.get<boolean>(Property.LOGGING)
   pooling: boolean = true
   config: MysqlConfig = {
     host: process.env.MYSQL_HOST,
@@ -43,9 +43,9 @@ export class Mysql implements Connection {
 
   private async poolExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
-      if (!this.pool) this.pool = await createPool(this.poolConfig)
+      if (!this.#pool) this.#pool = await createPool(this.poolConfig)
 
-      let [rows] = await this.pool.execute(query.sql, query.inputs)
+      let [rows] = await this.#pool.execute(query.sql, query.inputs)
 
       if (Array.isArray(rows)) return { rows: rows as Array<T> }
       else return { rows: [], metadata: rows }
@@ -56,9 +56,9 @@ export class Mysql implements Connection {
 
   private async connectionExecute<T>(query: Query): Promise<QueryResult<T>> {
     try {
-      if (!this.connection) this.connection = await createConnection(this.config)
+      if (!this.#connection) this.#connection = await createConnection(this.config)
 
-      const [rows] = await this.connection.execute(query.sql, query.inputs)
+      const [rows] = await this.#connection.execute(query.sql, query.inputs)
 
       if (Array.isArray(rows)) return { rows: rows as Array<T> }
       else return { rows: [], metadata: rows }
@@ -76,8 +76,8 @@ export class Mysql implements Connection {
     let connection: MysqlPoolConnection | undefined
 
     try {
-      if (!this.pool) this.pool = await createPool(this.poolConfig)
-      connection = await this.pool.getConnection()
+      if (!this.#pool) this.#pool = await createPool(this.poolConfig)
+      connection = await this.#pool.getConnection()
 
       await connection.beginTransaction()
 
@@ -98,27 +98,27 @@ export class Mysql implements Connection {
 
   private async connectionExecuteTransaction(queries: Query[]): Promise<TransactionResult> {
     try {
-      if (!this.connection) this.connection = await createConnection(this.config)
+      if (!this.#connection) this.#connection = await createConnection(this.config)
 
-      await this.connection.beginTransaction()
+      await this.#connection.beginTransaction()
 
       for (const query of queries) {
-        await this.connection.execute(query.sql, query.inputs)
+        await this.#connection.execute(query.sql, query.inputs)
       }
 
-      await this.connection.commit()
+      await this.#connection.commit()
 
       return {
         message: TRANSACTION_SUCCESS_MESSAGE
       }
     } catch (err) {
-      if (this.connection) await this.connection.rollback()
+      if (this.#connection) await this.#connection.rollback()
       throw Error(err)
     }
   }
 
   async end(): Promise<void> {
-    if (this.connection) await this.connection.end()
-    if (process.env.NODE_ENV === Environment.Test && this.pool) await this.pool.end()
+    if (this.#connection) await this.#connection.end()
+    if (process.env.NODE_ENV === Environment.Test && this.#pool) await this.#pool.end()
   }
 }
