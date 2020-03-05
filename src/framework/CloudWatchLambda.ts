@@ -26,7 +26,7 @@ export abstract class CloudWatchLambda implements LambdaFunction {
 
   async handler(): Promise<void> {
     try {
-      return this.invoke()
+      await this.invoke()
     } catch (err) {
       if (process.env.NODE_ENV !== Environment.Test) console.error(err)
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
