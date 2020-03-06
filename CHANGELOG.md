@@ -1,6 +1,10 @@
 # Changelog for aws-lambda-framework
 
-Fix:
+## [0.4.13] - 2020-03-06
+
+### Changed
+
+- Container scope changed from singleton to transient
 
 ## [0.4.12] - 2020-03-05
 
