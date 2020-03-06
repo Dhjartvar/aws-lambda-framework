@@ -21,8 +21,7 @@ require('dotenv').config()
 
 const LambdaContainer = new Container({
   autoBindInjectable: true,
-  skipBaseClassChecks: true,
-  defaultScope: 'Singleton'
+  skipBaseClassChecks: true
 })
 
 LambdaContainer.bind<string>(Property.REGION).toConstantValue(process.env.REGION ?? Region.Frankfurt)
