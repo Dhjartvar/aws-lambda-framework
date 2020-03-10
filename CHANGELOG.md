@@ -1,5 +1,15 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.14] - 2020-03-10
+
+### Changed
+
+- Container default scope reverted to singleton
+
+### Fix
+
+- If multiple mysql or postgres services are bound all of them will now be ended upon Lambda finish.
+
 ## [0.4.13] - 2020-03-06
 
 ### Changed
