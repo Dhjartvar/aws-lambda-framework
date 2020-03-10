@@ -45,8 +45,8 @@ export abstract class APIGatewayLambda implements LambdaFunction {
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
       return this.buildAPIGatewayResult(err.statusCode ?? HttpStatusCode.InternalServerError, err)
     } finally {
-      if (LambdaContainer.isBound(Mysql)) await LambdaContainer.get(Mysql).end()
-      if (LambdaContainer.isBound(Postgres)) await LambdaContainer.get(Postgres).end()
+      for (const mysql of LambdaContainer.getAll(Mysql)) await mysql.end()
+      for (const pg of LambdaContainer.getAll(Postgres)) await pg.end()
     }
   }
 
