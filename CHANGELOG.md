@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.15] - 2020-03-13
+
+### Changed
+
+- Errors are now always logged no matter the environment.
+
 ## [0.4.14] - 2020-03-10
 
 ### Changed
