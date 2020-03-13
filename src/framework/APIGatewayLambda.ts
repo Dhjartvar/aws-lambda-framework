@@ -41,7 +41,7 @@ export abstract class APIGatewayLambda implements LambdaFunction {
     try {
       return this.buildAPIGatewayResult(HttpStatusCode.Ok, await this.invoke())
     } catch (err) {
-      if (process.env.NODE_ENV !== Environment.Test) console.error(err)
+      console.error(err)
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
       return this.buildAPIGatewayResult(err.statusCode ?? HttpStatusCode.InternalServerError, err)
     } finally {

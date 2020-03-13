@@ -28,7 +28,7 @@ export abstract class DynamoDBStreamsLambda implements LambdaFunction {
     try {
       await this.invoke()
     } catch (err) {
-      if (process.env.NODE_ENV !== Environment.Test) console.error(err)
+      console.error(err)
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
     } finally {
       for (const mysql of LambdaContainer.getAll(Mysql)) await mysql.end()
