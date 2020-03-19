@@ -1,6 +1,10 @@
 # Changelog for aws-lambda-framework
 
-## [0.4.16] - 2020-03-18
+## [0.4.16] - 2020-03-19
+
+### Added
+
+- GraphQL support in APIGatewayLambda. Now returns the invoke result directly instead of parsing it if graphql path has been detected.
 
 ### Fixed
 
@@ -82,7 +86,7 @@
 
 ## [0.4.4] - 2020-02-13
 
-### Change
+### Changed
 
 - Erorrs caught in Lambda function are no longer casted to LambdaErrors.
 
