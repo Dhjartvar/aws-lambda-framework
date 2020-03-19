@@ -1,4 +1,4 @@
-import { Metadata } from 'aws-sdk/clients/appstream'
+import { Metadata } from './Metadata'
 
 /**
  * @return result rows
