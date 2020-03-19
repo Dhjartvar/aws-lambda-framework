@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.16] - 2020-03-18
+
+### Fixed
+
+- QueryResult metadata now returns a type instead of unknown
+
 ## [0.4.15] - 2020-03-13
 
 ### Changed
@@ -12,7 +18,7 @@
 
 - Container default scope reverted to singleton
 
-### Fix
+### Fixed
 
 - If multiple mysql or postgres services are bound all of them will now be ended upon Lambda finish.
 
@@ -24,7 +30,7 @@
 
 ## [0.4.12] - 2020-03-05
 
-### Fix
+### Fixed
 
 - Now awaits invoke() rather than return in Lambda base classes
 
@@ -36,13 +42,13 @@
 
 ## [0.4.10] - 2020-03-05
 
-### Fix
+### Fixed
 
 - Event is now json parsed if possible to support sls framework
 
 ## [0.4.9] - 2020-03-05
 
-### Fix
+### Fixed
 
 - mysql2 createPool method is now awaited despite it's typings not returning a promise.
 
@@ -58,19 +64,19 @@
 
 - SQSLambda for Lambda functions that respond to SQS events
 
-### Fix
+### Fixed
 
 - AWS Exports
 
 ## [0.4.6] - 2020-02-14
 
-### Fix
+### Fixed
 
 - Directory structure is no longer changed in build files
 
 ## [0.4.5] - 2020-02-14
 
-### Fix
+### Fixed
 
 - Event Body is now rebound in the same way it is bound
 
@@ -82,13 +88,13 @@
 
 ## [0.4.3] - 2020-02-13
 
-### Fix
+### Fixed
 
 - Event body is now only parsed if possible, otherwise the raw data is used.
 
 ## [0.4.2] - 2020-02-13
 
-### Fix
+### Fixed
 
 - userMessage prop in LambdaError is no longer overwritten.
 
@@ -98,7 +104,7 @@
 
 - Removed Context from LambdaErrors
 
-### Fix
+### Fixed
 
 - Constants are now rebound upon consecutive Lambda invocations.
 - CognitoToken is now only bound if Authorization header exists.
@@ -118,7 +124,7 @@
 
 - InputValidator renamed to Validator
 
-### Fix
+### Fixed
 
 - Removed explicit types in error classes where they were already implicit
 

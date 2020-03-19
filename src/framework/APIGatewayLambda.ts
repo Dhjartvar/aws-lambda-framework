@@ -5,7 +5,6 @@ import {
   Postgres,
   SlackNotifier,
   Property,
-  Environment,
   HttpStatusCode,
   Context,
   APIGatewayProxyResult,

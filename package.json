@@ -1,6 +1,6 @@
 {
   "name": "aws-lambda-framework",
-  "version": "0.4.15",
+  "version": "0.4.16",
   "description": "A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, and using AWS services",
   "main": "dist/src/aws-lambda-framework.js",
   "types": "dist/src/aws-lambda-framework.d.ts",
