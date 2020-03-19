@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.17] - 2020-03-19
+
+### Added
+
+- Support for serverless-plugin-warmup by checking if function called from plugin in handler.
+
 ## [0.4.16] - 2020-03-19
 
 ### Added
