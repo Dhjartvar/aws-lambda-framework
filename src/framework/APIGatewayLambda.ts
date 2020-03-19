@@ -14,7 +14,10 @@ import jwtDecode from 'jwt-decode'
 import { tryJSONparse } from './utils/tryJSONparse'
 
 export abstract class APIGatewayLambda implements LambdaFunction {
+  #graphql = false
+
   constructor(event: APIGatewayProxyEvent, context: Context) {
+    if (!this.#graphql && ['/graphql', '/graphiql', '/playground'].includes(event.path)) this.#graphql = true
     if (LambdaContainer.isBound(Property.EVENT)) {
       LambdaContainer.rebind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
       LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
@@ -31,13 +34,15 @@ export abstract class APIGatewayLambda implements LambdaFunction {
         LambdaContainer.bind<Context>(Property.COGNITO_TOKEN).toConstantValue(
           JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
         )
+      
     }
   }
 
   abstract async invoke(): Promise<object>
 
-  async handler(): Promise<APIGatewayProxyResult> {
+  async handler(): Promise<APIGatewayProxyResult | any> {
     try {
+      if (this.#graphql) return this.invoke()
       return this.buildAPIGatewayResult(HttpStatusCode.Ok, await this.invoke())
     } catch (err) {
       console.error(err)
