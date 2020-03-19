@@ -41,6 +41,7 @@ export abstract class APIGatewayLambda implements LambdaFunction {
   abstract async invoke(): Promise<object>
 
   async handler(): Promise<APIGatewayProxyResult | any> {
+    if (LambdaContainer.get<any>(Property.EVENT).source === 'serverless-plugin-warmup') return 'Warmup'
     try {
       if (this.#graphql) return this.invoke()
       return this.buildAPIGatewayResult(HttpStatusCode.Ok, await this.invoke())
