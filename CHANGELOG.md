@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.18] - 2020-03-22
+
+### Changed
+
+- executeTransaction on connections now returns an array of QueryResults.
+
 ## [0.4.17] - 2020-03-19
 
 ### Added
