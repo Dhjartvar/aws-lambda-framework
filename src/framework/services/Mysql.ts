@@ -13,7 +13,6 @@ import { LambdaContainer, Environment, Property } from '../../aws-lambda-framewo
 import { Query } from '../interfaces/Query'
 import 'reflect-metadata'
 import { QueryResult } from '../interfaces/QueryResult'
-import { TransactionResult, TRANSACTION_SUCCESS_MESSAGE } from '../interfaces/TransactionResult'
 
 @injectable()
 export class Mysql implements Connection {
@@ -45,7 +44,7 @@ export class Mysql implements Connection {
     try {
       if (!this.#pool) this.#pool = await createPool(this.poolConfig)
 
-      let [rows] = await this.#pool.execute(query.sql, query.inputs)
+      const [rows] = await this.#pool.execute(query.sql, query.inputs)
 
       if (Array.isArray(rows)) return { rows: rows as Array<T> }
       else return { rows: [], metadata: rows }
@@ -67,13 +66,14 @@ export class Mysql implements Connection {
     }
   }
 
-  async executeTransaction(queries: Query[]): Promise<TransactionResult> {
+  async executeTransaction<T>(queries: Query[]): Promise<QueryResult<T>[]> {
     if (this.pooling) return this.poolExecuteTransaction(queries)
     else return this.connectionExecuteTransaction(queries)
   }
 
-  private async poolExecuteTransaction(queries: Query[]): Promise<TransactionResult> {
+  private async poolExecuteTransaction<T>(queries: Query[]): Promise<QueryResult<T>[]> {
     let connection: MysqlPoolConnection | undefined
+    const res: QueryResult<T>[] = []
 
     try {
       if (!this.#pool) this.#pool = await createPool(this.poolConfig)
@@ -82,35 +82,37 @@ export class Mysql implements Connection {
       await connection.beginTransaction()
 
       for (const query of queries) {
-        await connection.execute(query.sql, query.inputs)
+        const [rows] = await connection.execute(query.sql, query.inputs)
+        if (Array.isArray(rows)) res.push({ rows: rows as Array<T> })
+        else res.push({ rows: [], metadata: rows })
       }
 
       await connection.commit()
 
-      return {
-        message: TRANSACTION_SUCCESS_MESSAGE
-      }
+      return res
     } catch (err) {
       if (connection) await connection.rollback()
       throw Error(err)
     }
   }
 
-  private async connectionExecuteTransaction(queries: Query[]): Promise<TransactionResult> {
+  private async connectionExecuteTransaction<T>(queries: Query[]): Promise<QueryResult<T>[]> {
+    const transactionRes: QueryResult<T>[] = []
+
     try {
       if (!this.#connection) this.#connection = await createConnection(this.config)
 
       await this.#connection.beginTransaction()
 
       for (const query of queries) {
-        await this.#connection.execute(query.sql, query.inputs)
+        const [rows] = await this.#connection.execute(query.sql, query.inputs)
+        if (Array.isArray(rows)) transactionRes.push({ rows: rows as Array<T> })
+        else transactionRes.push({ rows: [], metadata: rows })
       }
 
       await this.#connection.commit()
 
-      return {
-        message: TRANSACTION_SUCCESS_MESSAGE
-      }
+      return transactionRes
     } catch (err) {
       if (this.#connection) await this.#connection.rollback()
       throw Error(err)
