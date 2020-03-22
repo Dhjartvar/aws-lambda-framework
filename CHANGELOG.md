@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.19] - 2020-03-22
+
+### Fixed
+
+- AWS exports no longer exported as types.
+
 ## [0.4.18] - 2020-03-22
 
 ### Changed

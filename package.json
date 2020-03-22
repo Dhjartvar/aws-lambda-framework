@@ -1,6 +1,6 @@
 {
   "name": "aws-lambda-framework",
-  "version": "0.4.18",
+  "version": "0.4.19",
   "description": "A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, and using AWS services",
   "main": "dist/src/aws-lambda-framework.js",
   "types": "dist/src/aws-lambda-framework.d.ts",
@@ -28,12 +28,13 @@
   "license": "MIT",
   "dependencies": {
     "@types/aws-lambda": "^8.10.46",
-    "class-validator": "^0.11.0",
+    "class-validator": "^0.11.1",
     "dotenv": "^8.2.0",
     "inversify": "^5.0.1",
     "jwt-decode": "^2.2.0",
     "lambda-slack-notifier": "^1.0.4",
     "mysql2": "^2.1.0",
+    "npm": "^6.14.3",
     "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13"
   },
@@ -43,8 +44,8 @@
     "@types/jwt-decode": "^2.2.1",
     "@types/moment-timezone": "^0.5.12",
     "@types/mysql2": "github:types/mysql2",
-    "@types/pg": "^7.14.1",
-    "aws-sdk": "^2.632.0",
+    "@types/pg": "^7.14.3",
+    "aws-sdk": "^2.643.0",
     "codecov": "^3.6.5",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
