@@ -1,6 +1,6 @@
 {
   "name": "aws-lambda-framework",
-  "version": "0.4.19",
+  "version": "0.4.20",
   "description": "A framework for simplifying writing AWS Lambda functions in typescript featuring IoC with services for input validation, sending slack notifications, and using AWS services",
   "main": "dist/src/aws-lambda-framework.js",
   "types": "dist/src/aws-lambda-framework.d.ts",
@@ -33,6 +33,7 @@
     "inversify": "^5.0.1",
     "jwt-decode": "^2.2.0",
     "lambda-slack-notifier": "^1.0.4",
+    "module-alias": "^2.2.2",
     "mysql2": "^2.1.0",
     "npm": "^6.14.3",
     "pg": "^7.18.2",

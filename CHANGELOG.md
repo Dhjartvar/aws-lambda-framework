@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.20] - 2020-03-24
+
+### Added
+
+- module-alias lib for ts paths support.
+
 ## [0.4.19] - 2020-03-22
 
 ### Fixed
