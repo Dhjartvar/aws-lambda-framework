@@ -18,6 +18,7 @@ import { Property } from './symbols/Property'
 import { Environment } from './enums/Environment'
 import { Region } from './enums/Region'
 require('dotenv').config()
+require('module-alias/register')
 
 const LambdaContainer = new Container({
   autoBindInjectable: true,
