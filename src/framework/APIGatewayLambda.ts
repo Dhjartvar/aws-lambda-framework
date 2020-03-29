@@ -18,24 +18,27 @@ export abstract class APIGatewayLambda implements LambdaFunction {
 
   constructor(event: APIGatewayProxyEvent, context: Context) {
     if (!this.#graphql && ['/graphql', '/graphiql', '/playground'].includes(event.path)) this.#graphql = true
-    if (LambdaContainer.isBound(Property.EVENT)) {
+
+    if (LambdaContainer.isBound(Property.EVENT))
       LambdaContainer.rebind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
+    else LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
+    
+    if (LambdaContainer.isBound(Property.CONTEXT))
       LambdaContainer.rebind<Context>(Property.CONTEXT).toConstantValue(context)
-      if (event.body) LambdaContainer.rebind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
-      if (event.headers?.Authorization)
-        LambdaContainer.rebind<Context>(Property.COGNITO_TOKEN).toConstantValue(
-          JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
-        )
-    } else {
-      LambdaContainer.bind<APIGatewayProxyEvent>(Property.EVENT).toConstantValue(tryJSONparse(event))
-      LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
-      if (event.body) LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
-      if (event.headers?.Authorization)
-        LambdaContainer.bind<Context>(Property.COGNITO_TOKEN).toConstantValue(
-          JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
-        )
-      
-    }
+    else LambdaContainer.bind<Context>(Property.CONTEXT).toConstantValue(context)
+
+    if (LambdaContainer.isBound(Property.EVENT_BODY) && event.body)
+      LambdaContainer.rebind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
+    else if (event.body) LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
+
+    if (LambdaContainer.isBound(Property.COGNITO_TOKEN) && event.headers?.Authorization)
+      LambdaContainer.rebind<Context>(Property.COGNITO_TOKEN).toConstantValue(
+        JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
+      )
+    else if (event.headers?.Authorization)
+      LambdaContainer.bind<Context>(Property.COGNITO_TOKEN).toConstantValue(
+        JSON.parse(JSON.stringify(jwtDecode(event.headers.Authorization)))
+      )
   }
 
   abstract async invoke(): Promise<object>
