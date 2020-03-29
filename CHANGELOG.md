@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.21] - 2020-03-30
+
+### Fix
+
+- ServiceIdentifier rebind bug in rare cases
+
 ## [0.4.20] - 2020-03-24
 
 ### Added
