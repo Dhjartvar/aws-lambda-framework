@@ -1,5 +1,12 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.22] - 2020-04-01
+
+### Fix
+
+- EventBody now bound to undefined if no input given
+- No longer checks for warmup plugin in handler, as an error will be thrown in Lambda constructor before reaching this code. Instead put this into the handler function
+
 ## [0.4.21] - 2020-03-30
 
 ### Fix
