@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.27] - 2020-04-01
+
+### Fix
+
+- Cognito trigger Lambda bug
+
 ## [0.4.26] - 2020-04-01
 
 ### Fix
