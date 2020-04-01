@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.28] - 2020-04-02
+
+### Added
+
+- CognitoTriggerLambda for Cognito UserPool triggers.
+
 ## [0.4.27] - 2020-04-01
 
 ### Fix
