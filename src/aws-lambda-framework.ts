@@ -8,6 +8,7 @@ export { Validator } from './framework/services/Validator'
 export { SlackNotifier } from './framework/services/SlackNotifier'
 export {
   Context,
+  CognitoUserPoolTriggerEvent,
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
   DynamoDBStreamEvent,
@@ -20,6 +21,7 @@ export { Query } from './framework/interfaces/Query'
 export { S3, Lambda, SSM, DynamoDB, RDS, Redshift, Kinesis, APIGateway, CloudWatch, CloudFront, SES } from 'aws-sdk'
 export { APIGatewayLambda } from './framework/APIGatewayLambda'
 export { CloudWatchLambda } from './framework/CloudWatchLambda'
+export { CognitoTriggerLambda } from './framework/CognitoTriggerLambda'
 export { DynamoDBStreamsLambda } from './framework/DynamoDBStreamsLambda'
 export { SQSLambda } from './framework/SQSLambda'
 export { LambdaContainer } from './framework/LambdaContainer'
