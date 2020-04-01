@@ -29,7 +29,7 @@ export abstract class APIGatewayLambda implements LambdaFunction {
 
     if (LambdaContainer.isBound(Property.EVENT_BODY) && event.body)
       LambdaContainer.rebind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
-    else if (event.body) LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
+    else LambdaContainer.bind(Property.EVENT_BODY).toConstantValue(tryJSONparse(event.body))
 
     if (LambdaContainer.isBound(Property.COGNITO_TOKEN) && event.headers?.Authorization)
       LambdaContainer.rebind<Context>(Property.COGNITO_TOKEN).toConstantValue(
@@ -44,7 +44,6 @@ export abstract class APIGatewayLambda implements LambdaFunction {
   abstract async invoke(): Promise<object>
 
   async handler(): Promise<APIGatewayProxyResult | any> {
-    if (LambdaContainer.get<any>(Property.EVENT).source === 'serverless-plugin-warmup') return 'Warmup'
     try {
       if (this.#graphql) return this.invoke()
       return this.buildAPIGatewayResult(HttpStatusCode.Ok, await this.invoke())
