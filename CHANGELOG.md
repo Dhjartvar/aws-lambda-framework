@@ -1,6 +1,6 @@
 # Changelog for aws-lambda-framework
 
-## [0.4.22] - 2020-04-01
+## [0.4.23] - 2020-04-01
 
 ### Fix
 
