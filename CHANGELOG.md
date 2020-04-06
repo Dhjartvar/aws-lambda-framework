@@ -1,5 +1,15 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.29] - 2020-04-06
+
+### Added
+
+- SNSLambda for functions that are triggered by SNS.
+
+### Changed
+
+- SQSLambda now parses the body of each record contained in the SQS Event and saves it to the EVENT_BODY property
+
 ## [0.4.28] - 2020-04-02
 
 ### Added
