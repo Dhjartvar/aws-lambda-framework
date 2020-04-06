@@ -1,13 +1,5 @@
 import LambdaFunction from './interfaces/LambdaFunction'
-import {
-  LambdaContainer,
-  Mysql,
-  Postgres,
-  SlackNotifier,
-  Property,
-  Environment,
-  Context
-} from '../aws-lambda-framework'
+import { LambdaContainer, Mysql, Postgres, SlackNotifier, Property, Context } from '../aws-lambda-framework'
 import { CloudWatchLogsEvent } from 'aws-lambda'
 import { tryJSONparse } from './utils/tryJSONparse'
 
