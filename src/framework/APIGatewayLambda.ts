@@ -46,18 +46,18 @@ export abstract class APIGatewayLambda implements LambdaFunction {
   async handler(): Promise<APIGatewayProxyResult | any> {
     try {
       if (this.#graphql) return this.invoke()
-      return this.buildAPIGatewayResult(HttpStatusCode.Ok, await this.invoke())
+      return this.buildAPIGatewayResponse(HttpStatusCode.Ok, await this.invoke())
     } catch (err) {
       console.error(err)
       await LambdaContainer.get(SlackNotifier).notify(err.errorMessage ?? err)
-      return this.buildAPIGatewayResult(err.statusCode ?? HttpStatusCode.InternalServerError, err)
+      return this.buildAPIGatewayResponse(err.statusCode ?? HttpStatusCode.InternalServerError, err)
     } finally {
       for (const mysql of LambdaContainer.getAll(Mysql)) await mysql.end()
       for (const pg of LambdaContainer.getAll(Postgres)) await pg.end()
     }
   }
 
-  private buildAPIGatewayResult(statusCode: HttpStatusCode, res: object): APIGatewayProxyResult {
+  private buildAPIGatewayResponse(statusCode: HttpStatusCode, res: string | object): APIGatewayProxyResult {
     let response: APIGatewayProxyResult = {
       statusCode: statusCode,
       headers: {
@@ -65,7 +65,7 @@ export abstract class APIGatewayLambda implements LambdaFunction {
         'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
         'content-type': 'application/json'
       },
-      body: JSON.stringify(res),
+      body: typeof res === 'string' ? res : JSON.stringify(res),
       isBase64Encoded: false
     }
 
