@@ -1,5 +1,11 @@
 # Changelog for aws-lambda-framework
 
+## [0.4.30] - 2020-04-16
+
+### Fix
+
+- Errors not being returned to user in APIGatewayLambda
+
 ## [0.4.29] - 2020-04-06
 
 ### Added
